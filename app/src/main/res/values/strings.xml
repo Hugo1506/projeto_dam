@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">projeto_dam</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="fragmento1">fragmento1</string>
+    <string name="fragmento2">fragmento2</string>
+    <string name="fragmento3">fragmento3</string>
 </resources>
