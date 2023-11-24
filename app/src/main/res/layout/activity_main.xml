@@ -11,22 +11,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:layout_alignParentBottom="true"
         app:cardElevation="8dp">
 
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#1A237E"
+            android:layout_height="match_parent"
+            android:backgroundTint="@color/dark_blue"
             app:tabIndicatorColor="@color/white"
             app:tabTextColor="@color/white">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="📸"
-                />
+                android:text="@string/cam" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
@@ -44,6 +44,6 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

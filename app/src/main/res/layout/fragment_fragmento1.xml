@@ -6,9 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".Fragmento1">
 
-    <TextView
+
+    <Button
+        android:id="@+id/butFrag1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/dark_blue"
+        android:textColor="@color/white"
+        android:text="@string/foto" />
+
+    <ImageView
+        android:id="@+id/imagem"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </FrameLayout>
