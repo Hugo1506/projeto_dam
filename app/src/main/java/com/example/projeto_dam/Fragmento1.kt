@@ -1,17 +1,14 @@
 package com.example.projeto_dam
 
-import android.app.Activity
-import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
-import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
-import androidx.activity.result.contract.ActivityResultContracts
+import android.widget.Toast
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,9 +24,8 @@ class Fragmento1 : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-
-    lateinit var button: Button
-    lateinit var imageView: ImageView
+    private lateinit var button: Button
+    private lateinit var imageView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,14 +36,28 @@ class Fragmento1 : Fragment() {
         }
     }
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val view = inflater.inflate(R.layout.fragment_fragmento1, container, false)
+        button = view.findViewById(R.id.butFrag1)
+        imageView = view.findViewById(R.id.imagem)
 
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_fragmento1, container, false)
+        button.setOnClickListener {
+            tirarFoto()
+        }
+
+        return view
     }
+
+    private fun tirarFoto(){
+        Toast.makeText(requireContext(), "openCamera() function is reached", Toast.LENGTH_SHORT).show()
+    }
+
+
 
     companion object {
         /**
