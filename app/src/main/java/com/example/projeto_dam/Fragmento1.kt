@@ -1,6 +1,11 @@
 package com.example.projeto_dam
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +13,14 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.PrintStream
+import java.util.Scanner
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -53,9 +66,63 @@ class Fragmento1 : Fragment() {
         return view
     }
 
-    private fun tirarFoto(){
-        Toast.makeText(requireContext(), "openCamera() function is reached", Toast.LENGTH_SHORT).show()
+    private fun tirarFoto() {
+
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        resultLauncher.launch(cameraIntent)
     }
+
+
+    var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data: Intent? = result.data
+            escrever(data?.extras?.get("data") as Bitmap)
+            imageView.setImageBitmap(ler("imagem.bit"))
+        }
+    }
+
+    /**
+    * guarda a imagem no armazenamento interno
+    * */
+    fun escrever(imagem : Bitmap) {
+        // escrita no internal Storage
+        val directory: File = requireContext().filesDir
+        val file: File  = File(directory, "imagem.bit")
+        val fo: FileOutputStream = FileOutputStream(file)
+        // comprime a imagem em bitmap para um png
+        imagem.compress(Bitmap.CompressFormat.PNG, 100, fo)
+        fo.close()
+    }
+
+
+    /**
+     * leitura do armazenamento interno
+     */
+    fun ler(nome: String): Bitmap? {
+        val directory: File = requireContext().filesDir
+        val file: File = File(directory, nome)
+
+        try {
+            val fi: FileInputStream = FileInputStream(file)
+            // transforma o png num bitmap
+            val bitmap: Bitmap = BitmapFactory.decodeStream(fi)
+            fi.close()
+            // retorna a imagem do ficheiro
+            return bitmap
+        } catch (e: FileNotFoundException) {
+            // não existe nenhum ficheiro com o nome dado
+            Toast.makeText(requireContext(), "ficheiro não encontrado", Toast.LENGTH_LONG).show()
+        } catch (e: IOException) {
+            // preblemas a ler o ficheiro
+            Toast.makeText(requireContext(), "Erro a ler o ficheiro", Toast.LENGTH_LONG).show()
+        }
+
+        // se houver algum error devolve null
+        return null
+    }
+
+
+
 
 
 
