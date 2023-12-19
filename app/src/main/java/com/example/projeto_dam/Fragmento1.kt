@@ -76,7 +76,7 @@ class Fragmento1 : Fragment() {
     var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
-            escrever(data?.extras?.get("data") as Bitmap)
+            escrever(data?.extras?.get("data") as Bitmap,currentNameFile() )
             imageView.setImageBitmap(ler("imagem.bit"))
         }
     }
@@ -84,14 +84,33 @@ class Fragmento1 : Fragment() {
     /**
     * guarda a imagem no armazenamento interno
     * */
-    fun escrever(imagem : Bitmap) {
+    fun escrever(imagem : Bitmap, nome: String) {
         // escrita no internal Storage
         val directory: File = requireContext().filesDir
-        val file: File  = File(directory, "imagem.bit")
+        val file: File  = File(directory, "$nome.bit")
         val fo: FileOutputStream = FileOutputStream(file)
         // comprime a imagem em bitmap para um png
         imagem.compress(Bitmap.CompressFormat.PNG, 100, fo)
         fo.close()
+
+        // aumenta o index que dará o nome do próximo ficheiro
+        val dir: File = requireContext().filesDir
+        val f: File  = File(directory, "nomes.txt")
+        val foNomes: FileOutputStream = FileOutputStream(f)
+        val currentNumber: Int = try {
+            FileInputStream(f).bufferedReader().use { it.readText().toInt() }
+        } catch (e: FileNotFoundException) {
+            0 // se o ficheiro não exitir, ele é criado com "0"
+        } catch (e: NumberFormatException) {
+            0 // outros problemas metem o numero a 0
+        }
+        // aumenta o valor
+        val newNumber = currentNumber + 1
+
+        // escreve o novo valor
+        f.writeText(newNumber.toString())
+        Toast.makeText(requireContext(), FileInputStream(f).bufferedReader().use { it.readText() }, Toast.LENGTH_LONG).show()
+        foNomes.close()
     }
 
 
@@ -119,6 +138,20 @@ class Fragmento1 : Fragment() {
 
         // se houver algum error devolve null
         return null
+    }
+
+    fun currentNameFile(): String {
+        val dir: File = requireContext().filesDir
+        val file: File = File(dir, "nomes.txt")
+
+        val currentNumber: Int = try {
+            FileInputStream(file).bufferedReader().use { it.readText().toInt() }
+        } catch (e: FileNotFoundException) {
+            return "0"
+        } catch (e: NumberFormatException) {
+            return "0"
+        }
+        return currentNumber.toString()
     }
 
 

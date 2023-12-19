@@ -1,9 +1,14 @@
 <resources>
     <string name="app_name">projeto_dam</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="fragmento2">Pincipal</string>
     <string name="fragmento3">Sobre</string>
     <string name="cam">📸</string>
     <string name="foto">Tirar foto</string>
+    <string name="sobre">
+        Engenharia informática \n
+        Desenvolvimento de Aplicações Móveis 2023/2024 \n
+        Hugo Marques: nº 24171
+
+    </string>
 </resources>
