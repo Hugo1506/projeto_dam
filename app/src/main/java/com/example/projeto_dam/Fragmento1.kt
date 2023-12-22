@@ -76,8 +76,8 @@ class Fragmento1 : Fragment() {
     var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
-            escrever(data?.extras?.get("data") as Bitmap,currentNameFile() )
-            imageView.setImageBitmap(ler("imagem.bit"))
+            escrever(data?.extras?.get("data") as Bitmap, currentNameFile() )
+            imageView.setImageBitmap(ler(currentNameFile()))
         }
     }
 
@@ -94,15 +94,15 @@ class Fragmento1 : Fragment() {
         fo.close()
 
         // aumenta o index que dará o nome do próximo ficheiro
-        val dir: File = requireContext().filesDir
+        // val dir: File = requireContext().filesDir
         val f: File  = File(directory, "nomes.txt")
         val foNomes: FileOutputStream = FileOutputStream(f)
         val currentNumber: Int = try {
             FileInputStream(f).bufferedReader().use { it.readText().toInt() }
         } catch (e: FileNotFoundException) {
-            0 // se o ficheiro não exitir, ele é criado com "0"
+            -1 // se o ficheiro não exitir, ele é criado com "0"
         } catch (e: NumberFormatException) {
-            0 // outros problemas metem o numero a 0
+            -1 // outros problemas metem o numero a "0"
         }
         // aumenta o valor
         val newNumber = currentNumber + 1
@@ -119,7 +119,7 @@ class Fragmento1 : Fragment() {
      */
     fun ler(nome: String): Bitmap? {
         val directory: File = requireContext().filesDir
-        val file: File = File(directory, nome)
+        val file: File = File(directory, "$nome.bit")
 
         try {
             val fi: FileInputStream = FileInputStream(file)
