@@ -6,7 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,13 +14,12 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.PrintStream
-import java.util.Scanner
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -73,53 +72,49 @@ class Fragmento1 : Fragment() {
     }
 
 
-    var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
             escrever(data?.extras?.get("data") as Bitmap, currentNameFile() )
-            imageView.setImageBitmap(ler(currentNameFile()))
+            imageView.setImageBitmap(ler())
         }
     }
 
     /**
     * guarda a imagem no armazenamento interno
     * */
-    fun escrever(imagem : Bitmap, nome: String) {
+    private fun escrever(imagem : Bitmap, nome: String) {
         // escrita no internal Storage
         val directory: File = requireContext().filesDir
         val file: File  = File(directory, "$nome.bit")
         val fo: FileOutputStream = FileOutputStream(file)
         // comprime a imagem em bitmap para um png
         imagem.compress(Bitmap.CompressFormat.PNG, 100, fo)
+        fo.flush()
         fo.close()
 
         // aumenta o index que dará o nome do próximo ficheiro
         // val dir: File = requireContext().filesDir
         val f: File  = File(directory, "nomes.txt")
-        val foNomes: FileOutputStream = FileOutputStream(f)
-        val currentNumber: Int = try {
-            FileInputStream(f).bufferedReader().use { it.readText().toInt() }
-        } catch (e: FileNotFoundException) {
-            -1 // se o ficheiro não exitir, ele é criado com "0"
-        } catch (e: NumberFormatException) {
-            -1 // outros problemas metem o numero a "0"
-        }
+
+
+        val currentNumber: Int = currentNameFile().toInt()
         // aumenta o valor
         val newNumber = currentNumber + 1
-
         // escreve o novo valor
         f.writeText(newNumber.toString())
-        Toast.makeText(requireContext(), FileInputStream(f).bufferedReader().use { it.readText() }, Toast.LENGTH_LONG).show()
-        foNomes.close()
+        Toast.makeText(requireContext(), newNumber.toString() , Toast.LENGTH_LONG).show()
+        Log.i("------>",""+newNumber)
+
     }
 
 
     /**
      * leitura do armazenamento interno
      */
-    fun ler(nome: String): Bitmap? {
+    private fun ler(): Bitmap? {
         val directory: File = requireContext().filesDir
-        val file: File = File(directory, "$nome.bit")
+        val file: File = File(directory, (currentNameFile().toInt() - 1).toString() + ".bit")
 
         try {
             val fi: FileInputStream = FileInputStream(file)
@@ -132,7 +127,7 @@ class Fragmento1 : Fragment() {
             // não existe nenhum ficheiro com o nome dado
             Toast.makeText(requireContext(), "ficheiro não encontrado", Toast.LENGTH_LONG).show()
         } catch (e: IOException) {
-            // preblemas a ler o ficheiro
+            // problemas a ler o ficheiro
             Toast.makeText(requireContext(), "Erro a ler o ficheiro", Toast.LENGTH_LONG).show()
         }
 
@@ -140,18 +135,16 @@ class Fragmento1 : Fragment() {
         return null
     }
 
-    fun currentNameFile(): String {
+    private fun currentNameFile(): String {
         val dir: File = requireContext().filesDir
         val file: File = File(dir, "nomes.txt")
 
-        val currentNumber: Int = try {
-            FileInputStream(file).bufferedReader().use { it.readText().toInt() }
-        } catch (e: FileNotFoundException) {
-            return "0"
-        } catch (e: NumberFormatException) {
+        val currentNumber: String = try {
+            file.readText(Charsets.UTF_8)
+        } catch (e: Exception) {
             return "0"
         }
-        return currentNumber.toString()
+        return currentNumber
     }
 
 
