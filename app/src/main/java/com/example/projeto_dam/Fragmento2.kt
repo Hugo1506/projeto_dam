@@ -1,10 +1,17 @@
 package com.example.projeto_dam
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.IOException
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -33,11 +40,53 @@ class Fragmento2 : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_fragmento2, container, false)
     }
 
 
+    fun ler (){
+        val bitmapList: ArrayList<Bitmap?> = ArrayList()
+        for (i in 0..<getNumFotos()){
+            bitmapList.add(getImage(i))
+        }
+        val ponto = 0
+    }
+    private fun getImage(i:Int): Bitmap? {
+        val directory: File = requireContext().filesDir
+        val file: File = File(directory, i.toString() + ".bit")
+
+        try {
+            val fi: FileInputStream = FileInputStream(file)
+            // transforma o png num bitmap
+            val bitmap: Bitmap = BitmapFactory.decodeStream(fi)
+            fi.close()
+            // retorna a imagem do ficheiro
+            return bitmap
+        } catch (e: FileNotFoundException) {
+            // não existe nenhum ficheiro com o nome dado
+            Toast.makeText(requireContext(), "ficheiro não encontrado", Toast.LENGTH_LONG).show()
+        } catch (e: IOException) {
+            // problemas a ler o ficheiro
+            Toast.makeText(requireContext(), "Erro a ler o ficheiro", Toast.LENGTH_LONG).show()
+        }
+
+        // se houver algum error devolve null
+        return null
+    }
+
+    fun getNumFotos() : Int {
+        val directory: File = requireContext().filesDir
+        val f: File = File(directory, "nomes.txt")
+
+            val fi: FileInputStream = FileInputStream(f)
+            val currentNumber: Int = try {
+                f.readText(Charsets.UTF_8).toInt()
+            } catch (e: Exception) {
+                return 0
+            }
+            return currentNumber
+
+    }
 
     companion object {
         /**
