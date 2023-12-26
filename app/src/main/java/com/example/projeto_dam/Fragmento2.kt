@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import java.io.File
 import java.io.FileInputStream
@@ -43,13 +45,32 @@ class Fragmento2 : Fragment() {
         return inflater.inflate(R.layout.fragment_fragmento2, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        ler()
+    }
+
 
     fun ler (){
         val bitmapList: ArrayList<Bitmap?> = ArrayList()
         for (i in 0..<getNumFotos()){
             bitmapList.add(getImage(i))
         }
-        val ponto = 0
+        val linearLayout: LinearLayout = requireView().findViewById(R.id.linear)
+
+        for (bitmap in bitmapList) {
+            if (bitmap != null) {
+                val imageView = ImageView(requireContext())
+                imageView.setImageBitmap(bitmap)
+
+                val layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+
+                linearLayout.addView(imageView, layoutParams)
+            }
+        }
     }
     private fun getImage(i:Int): Bitmap? {
         val directory: File = requireContext().filesDir
