@@ -3,6 +3,7 @@ package com.example.projeto_dam
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -50,27 +51,52 @@ class Fragmento2 : Fragment() {
         ler()
     }
 
+    //volta a ler as imagens exitentes para garantir que as imagens criadas depois do inicio da app são mostradass
+    override fun onResume() {
+        super.onResume()
+        ler()
+    }
 
-    fun ler (){
+
+    fun ler() {
         val bitmapList: ArrayList<Bitmap?> = ArrayList()
-        for (i in 0..<getNumFotos()){
+        for (i in 0 until getNumFotos()) {
             bitmapList.add(getImage(i))
         }
         val linearLayout: LinearLayout = requireView().findViewById(R.id.linear)
 
-        for (bitmap in bitmapList) {
+        // Ddefine que apenas podem haver 2 imagens por linha
+        val imagesPerRow = 2
+        var currentRow: LinearLayout? = null
+
+        for ((index, bitmap) in bitmapList.withIndex()) {
+            // quando o index é par ou seja de duas em duas imagens é criado uma nova linha que vai armazenar as imagens
+            if (index % imagesPerRow == 0) {
+                // cria uma nova linha para armazenar as imagens
+                currentRow = LinearLayout(requireContext())
+                currentRow.orientation = LinearLayout.HORIZONTAL
+                val layoutParams = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+                linearLayout.addView(currentRow, layoutParams)
+            }
+
             if (bitmap != null) {
                 val imageView = ImageView(requireContext())
                 imageView.setImageBitmap(bitmap)
 
-                val layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                )
+                // tamanho da imagem e margens
+                val imageSize = 500
+                val layoutParams = LinearLayout.LayoutParams(imageSize, imageSize)
+                layoutParams.setMargins(10, 0, 0, 50)
 
-                linearLayout.addView(imageView, layoutParams)
+                currentRow?.addView(imageView, layoutParams)
             }
         }
+
+        // Center the last row
+        linearLayout.gravity = Gravity.CENTER
     }
     private fun getImage(i:Int): Bitmap? {
         val directory: File = requireContext().filesDir
