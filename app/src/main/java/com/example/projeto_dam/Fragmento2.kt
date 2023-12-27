@@ -66,6 +66,7 @@ class Fragmento2 : Fragment() {
             bitmapList.add(getImage(i))
         }
         val linearLayout: LinearLayout = requireView().findViewById(R.id.linear)
+        //apaga todas as views anteriores
         linearLayout.removeAllViews()
         // Define que apenas podem haver 2 imagens por linha
         val imagesPerRow = 2
@@ -81,7 +82,8 @@ class Fragmento2 : Fragment() {
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )
-                linearLayout.addView(currentRow, layoutParams)
+                linearLayout.addView(currentRow,layoutParams)
+
             }
 
             if (bitmap != null) {
@@ -89,17 +91,33 @@ class Fragmento2 : Fragment() {
                 imageView.setImageBitmap(bitmap)
 
                 // tamanho da imagem e margens
-                val imageSize = 220
-                val layoutParams = LinearLayout.LayoutParams(imageSize, imageSize + 45 )
+                var imageSize = 220
+                var layoutParams = LinearLayout.LayoutParams(imageSize, imageSize + 45 )
                 layoutParams.setMargins(10, 0, 0, 50)
 
                 currentRow?.addView(imageView, layoutParams)
+
+                // quando uma imagem é clicada
+                imageView.setOnClickListener {
+                    linearLayout.removeAllViews()
+                    val clickedImageView = ImageView(requireContext())
+                    clickedImageView.setImageBitmap(bitmap)
+
+                    // tamanho da imagem
+                    imageSize = 500
+                    var layoutParams = LinearLayout.LayoutParams(imageSize, imageSize )
+
+
+                    linearLayout.addView(clickedImageView, layoutParams)
+                }
             }
         }
 
         // Center the last row
         linearLayout.gravity = Gravity.CENTER
     }
+
+
     private fun getImage(i:Int): Bitmap? {
         val directory: File = requireContext().filesDir
         val file: File = File(directory, i.toString() + ".bit")
@@ -123,6 +141,7 @@ class Fragmento2 : Fragment() {
         return null
     }
 
+    //devolve o numero de fotos
     private fun getNumFotos() : Int {
         val directory: File = requireContext().filesDir
         val f: File = File(directory, "nomes.txt")
@@ -135,6 +154,8 @@ class Fragmento2 : Fragment() {
             return currentNumber
 
     }
+
+
 
     companion object {
         /**
