@@ -7,10 +7,41 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
+    <EditText
+        android:id="@+id/Username"
+        android:layout_width="match_parent"
+        android:layout_height="25pt"
+        android:hint="@string/username"
+        android:inputType="text"
+        android:textSize="18pt"
+        android:singleLine="true"
+        android:text="@string/username"
+        >
+    </EditText>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="25pt"
+            android:textSize="18pt"
+            android:inputType="textPassword"
+            android:id="@+id/Password"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
+            android:layout_below="@id/Username"
+            android:hint="@string/password"
+            android:text="@string/password"
+            >
+        </EditText>
+
+
+
+
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:layout_below="@id/Password"
         android:layout_alignParentBottom="true"
         app:cardElevation="8dp">
 
