@@ -58,14 +58,16 @@ class Fragmento2 : Fragment() {
     }
 
 
-    fun ler() {
+
+    private fun ler() {
+
         val bitmapList: ArrayList<Bitmap?> = ArrayList()
         for (i in 0 until getNumFotos()) {
             bitmapList.add(getImage(i))
         }
         val linearLayout: LinearLayout = requireView().findViewById(R.id.linear)
-
-        // Ddefine que apenas podem haver 2 imagens por linha
+        linearLayout.removeAllViews()
+        // Define que apenas podem haver 2 imagens por linha
         val imagesPerRow = 2
         var currentRow: LinearLayout? = null
 
@@ -87,8 +89,8 @@ class Fragmento2 : Fragment() {
                 imageView.setImageBitmap(bitmap)
 
                 // tamanho da imagem e margens
-                val imageSize = 500
-                val layoutParams = LinearLayout.LayoutParams(imageSize, imageSize)
+                val imageSize = 220
+                val layoutParams = LinearLayout.LayoutParams(imageSize, imageSize + 45 )
                 layoutParams.setMargins(10, 0, 0, 50)
 
                 currentRow?.addView(imageView, layoutParams)
@@ -121,11 +123,10 @@ class Fragmento2 : Fragment() {
         return null
     }
 
-    fun getNumFotos() : Int {
+    private fun getNumFotos() : Int {
         val directory: File = requireContext().filesDir
         val f: File = File(directory, "nomes.txt")
 
-            val fi: FileInputStream = FileInputStream(f)
             val currentNumber: Int = try {
                 f.readText(Charsets.UTF_8).toInt()
             } catch (e: Exception) {
