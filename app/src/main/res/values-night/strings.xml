@@ -2,5 +2,10 @@
 <resources>
     <string name="fragmento2">fragmento2</string>
     <string name="fragmento3">fragmento3</string>
-    <string name="sobre">aaa</string>
+    <string name="sobre">
+        Engenharia informática \n
+        Desenvolvimento de Aplicações Móveis 2023/2024 \n
+        Hugo Marques: nº 24171
+        Luis Pedro Torres: nº 15454
+</string>
 </resources>
