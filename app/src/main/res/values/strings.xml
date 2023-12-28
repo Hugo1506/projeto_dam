@@ -12,4 +12,6 @@
         Luis Pedro Torres: nº 15454
 
     </string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
 </resources>
