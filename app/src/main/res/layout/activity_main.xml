@@ -12,12 +12,14 @@
         android:id="@+id/Username"
         android:layout_width="match_parent"
         android:layout_height="25pt"
+        android:paddingTop="5dp"
         android:hint="@string/username"
         android:inputType="text"
         android:textSize="18pt"
+        android:imeOptions="actionNext"
         android:singleLine="true"
-        android:text="@string/username"
-        >
+        android:textAlignment="center"
+        android:importantForAutofill="no">
     </EditText>
         <EditText
             android:layout_width="match_parent"
@@ -27,10 +29,11 @@
             android:id="@+id/Password"
             android:imeOptions="actionDone"
             android:singleLine="true"
+            android:paddingTop="5dp"
             android:layout_below="@id/Username"
             android:hint="@string/password"
-            android:text="@string/password"
-            >
+            android:textAlignment="center"
+            android:importantForAutofill="no">
         </EditText>
 
 
@@ -39,9 +42,8 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_below="@id/Password"
+        android:layout_height="50dp"
+        android:layout_margin="10dp"
         android:layout_alignParentBottom="true"
         app:cardElevation="8dp">
 
