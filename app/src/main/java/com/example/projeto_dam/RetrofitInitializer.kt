@@ -10,5 +10,5 @@ class RetrofitInitializer {
         .baseUrl("https://api.sheety.co/f78f66f4c4513d698d0e13096825199b/vinx/")
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
-    fun noteService(): Auth? = retrofit.create(Auth::class.java)
+    fun dadosService(): Auth? = retrofit.create(Auth::class.java)
 }

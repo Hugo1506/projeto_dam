@@ -16,24 +16,26 @@
         android:hint="@string/username"
         android:inputType="text"
         android:textSize="18pt"
-        android:imeOptions="actionNext"
         android:singleLine="true"
         android:textAlignment="center"
-        android:importantForAutofill="no">
+        android:importantForAutofill="no"
+        android:nextFocusDown="@id/Password"
+        >
     </EditText>
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="25pt"
+            android:layout_height="30pt"
             android:textSize="18pt"
-            android:inputType="textPassword"
+            android:inputType="textWebPassword"
             android:id="@+id/Password"
             android:imeOptions="actionDone"
             android:singleLine="true"
-            android:paddingTop="5dp"
-            android:layout_below="@id/Username"
+            android:paddingTop="10dp"
             android:hint="@string/password"
+            android:layout_below="@id/Username"
             android:textAlignment="center"
-            android:importantForAutofill="no">
+            android:importantForAutofill="no"
+            >
         </EditText>
 
 
