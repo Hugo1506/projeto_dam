@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
         userNameText.requestFocus()
         imm?.showSoftInput(userNameText, InputMethodManager.SHOW_IMPLICIT)
-        if (!userNameText.hasFocus()){
+        if (!userNameText.hasFocus()) {
             passwordText.requestFocus()
         }
         tabLayout = findViewById(R.id.tab_layout)
@@ -63,8 +63,11 @@ class MainActivity : AppCompatActivity() {
         })
         tabLayout.visibility = View.INVISIBLE
         viewPager2.visibility = View.INVISIBLE
-            passwordText.setOnKeyListener { _ , keyCode, k: KeyEvent ->
-                if(keyCode == keyCodeFromString("IME_ACTION_DONE")) {
+        passwordText.setOnEditorActionListener { _, keyCode, k: KeyEvent ->
+
+            @Override
+            fun onEditorAction(v: EditText, actionId: Int, event: KeyEvent): Boolean {
+                if (actionId == keyCodeFromString("IME_ACTION_DONE")) {
                     val call = RetrofitInitializer().dadosService()?.list()
                     call?.enqueue(object : Callback<List<DadosAuth>?> {
                         override fun onResponse(
@@ -78,7 +81,8 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         override fun onFailure(call: Call<List<DadosAuth>?>, t: Throwable) {
-                            t.message?.let { Log.e("onFailure error", it)
+                            t.message?.let {
+                                Log.e("onFailure error", it)
 
                             }
                         }
@@ -92,23 +96,34 @@ class MainActivity : AppCompatActivity() {
                         }
 
                     }
-                    if(auth) {
+                    if (auth) {
                         userNameText.visibility = View.INVISIBLE
                         passwordText.visibility = View.INVISIBLE
                         passwordText.clearFocus()
                         tabLayout.visibility = View.VISIBLE
                         viewPager2.visibility = View.VISIBLE
-                        Toast.makeText(this.applicationContext, "Acesso disponibilizado", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this.applicationContext,
+                            "Acesso disponibilizado",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                    return@setOnKeyListener true
+                    return true
                 }
-                Toast.makeText(this.applicationContext , "Acesso Negado", Toast.LENGTH_LONG).show()
-                false
-            }
 
+
+                return false
+            }
+            if(onEditorAction(passwordText, keyCode, k ) == true ) {
+                return@setOnEditorActionListener true
+            } else {
+                Toast.makeText(this.applicationContext, "Acesso Negado", Toast.LENGTH_LONG).show()
+                return@setOnEditorActionListener false
+            }
 
         }
 
+    }
 
 
 
