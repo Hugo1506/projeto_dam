@@ -2,7 +2,6 @@ package com.example.projeto_dam
 
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -12,10 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import kotlin.math.log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.Callback
+import okhttp3.Dispatcher
+import okhttp3.Response
 
 class MainActivity : AppCompatActivity() {
     lateinit var tabLayout: TabLayout
@@ -66,23 +68,7 @@ class MainActivity : AppCompatActivity() {
 
         passwordText.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val call = RetrofitInitializer().dadosService()?.list()
-                call?.enqueue(object : Callback<List<DadosAuth>?> {
-                    override fun onResponse(
-                        call: Call<List<DadosAuth>?>,
-                        response: Response<List<DadosAuth>?>
-                    ) {
-                        response.body()?.let {
-                            dados = it
-                        }
-                    }
-
-                    override fun onFailure(call: Call<List<DadosAuth>?>, t: Throwable) {
-                        t.message?.let {
-                            Log.e("onFailure error", it)
-                        }
-                    }
-                })
+                callAuth()
 
                 imm?.hideSoftInputFromWindow(passwordText.windowToken, 0)
 
@@ -118,4 +104,38 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    fun callAuth() {
+
+
+            val call = RetrofitInitializer().dadosService()?.list()
+        val enqueue: Unit? = call?.enqueue(object : Callback<List<DadosAuth>> {
+
+            CoroutineScope(Dispatchers.IO).launch {
+
+                override fun Response: List<DadosAuth>{
+
+                    response.body()?.let {
+                        dados = it
+                    }
+                }
+
+                override fun onFailure(call: Call<List<DadosAuth>?>, t: Throwable) {
+                    t.message?.let {
+                        Log.e("onFailure error", it)
+                    }
+                }
+                withContext(Dispatchers.Main) {
+
+                }
+            })
+
+        }
+
+    }
+
+
+
+
+
 }

@@ -20,6 +20,7 @@
         android:textAlignment="center"
         android:importantForAutofill="no"
         android:nextFocusDown="@id/Password"
+        android:focusableInTouchMode="true"
         >
     </EditText>
         <EditText
@@ -35,6 +36,7 @@
             android:layout_below="@id/Username"
             android:textAlignment="center"
             android:importantForAutofill="no"
+            android:focusableInTouchMode="true"
             >
         </EditText>
 
