@@ -3,7 +3,6 @@ package com.example.projeto_dam
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
@@ -15,9 +14,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.Callback
-import okhttp3.Dispatcher
-import okhttp3.Response
 
 class MainActivity : AppCompatActivity() {
     lateinit var tabLayout: TabLayout
@@ -66,12 +62,20 @@ class MainActivity : AppCompatActivity() {
         tabLayout.visibility = View.INVISIBLE
         viewPager2.visibility = View.INVISIBLE
 
-        passwordText.setOnEditorActionListener { _, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                callAuth()
+        imm?.hideSoftInputFromWindow(passwordText.windowToken, 0)
+        val call = RetrofitInitializer().dadosService()
 
-                imm?.hideSoftInputFromWindow(passwordText.windowToken, 0)
+        CoroutineScope(Dispatchers.IO).launch {
 
+                val response  = call!!.list().execute()
+
+
+            withContext(Dispatchers.Main) {
+                if(response.isSuccessful){
+                    dados = response.body()!!
+                } else {
+                    Toast.makeText(this@MainActivity, "Erro de Api", Toast.LENGTH_SHORT).show()
+                }
                 for (i in dados.indices) {
                     Log.d(userNameText.text.toString(),"")
                     Log.d(passwordText.text.toString(),"")
@@ -79,10 +83,8 @@ class MainActivity : AppCompatActivity() {
                         passwordText.text.toString() == dados[i].Password
                     ) {
                         auth = true
-                        break
                     }
                 }
-
                 if (auth) {
                     userNameText.visibility = View.INVISIBLE
                     passwordText.visibility = View.INVISIBLE
@@ -90,52 +92,16 @@ class MainActivity : AppCompatActivity() {
                     tabLayout.visibility = View.VISIBLE
                     viewPager2.visibility = View.VISIBLE
                     Toast.makeText(
-                        this.applicationContext,
+                        this@MainActivity,
                         "Acesso disponibilizado",
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    Toast.makeText(this.applicationContext, "Acesso Negado", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@MainActivity, "Acesso Negado", Toast.LENGTH_LONG).show()
                 }
-
-                true
-            } else {
-                false
             }
         }
-    }
 
-    fun callAuth() {
-
-
-            val call = RetrofitInitializer().dadosService()?.list()
-        val enqueue: Unit? = call?.enqueue(object : Callback<List<DadosAuth>> {
-
-            CoroutineScope(Dispatchers.IO).launch {
-
-                override fun Response: List<DadosAuth>{
-
-                    response.body()?.let {
-                        dados = it
-                    }
-                }
-
-                override fun onFailure(call: Call<List<DadosAuth>?>, t: Throwable) {
-                    t.message?.let {
-                        Log.e("onFailure error", it)
-                    }
-                }
-                withContext(Dispatchers.Main) {
-
-                }
-            })
-
-        }
 
     }
-
-
-
-
-
 }
