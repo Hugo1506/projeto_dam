@@ -2,9 +2,7 @@ package com.example.projeto_dam
 
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
@@ -12,10 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import kotlin.math.log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     lateinit var tabLayout: TabLayout
@@ -64,28 +62,20 @@ class MainActivity : AppCompatActivity() {
         tabLayout.visibility = View.INVISIBLE
         viewPager2.visibility = View.INVISIBLE
 
-        passwordText.setOnEditorActionListener { _, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val call = RetrofitInitializer().dadosService()?.list()
-                call?.enqueue(object : Callback<List<DadosAuth>?> {
-                    override fun onResponse(
-                        call: Call<List<DadosAuth>?>,
-                        response: Response<List<DadosAuth>?>
-                    ) {
-                        response.body()?.let {
-                            dados = it
-                        }
-                    }
+        imm?.hideSoftInputFromWindow(passwordText.windowToken, 0)
+        val call = RetrofitInitializer().dadosService()
 
-                    override fun onFailure(call: Call<List<DadosAuth>?>, t: Throwable) {
-                        t.message?.let {
-                            Log.e("onFailure error", it)
-                        }
-                    }
-                })
+        CoroutineScope(Dispatchers.IO).launch {
 
-                imm?.hideSoftInputFromWindow(passwordText.windowToken, 0)
+                val response  = call!!.list().execute()
 
+
+            withContext(Dispatchers.Main) {
+                if(response.isSuccessful){
+                    dados = response.body()!!
+                } else {
+                    Toast.makeText(this@MainActivity, "Erro de Api", Toast.LENGTH_SHORT).show()
+                }
                 for (i in dados.indices) {
                     Log.d(userNameText.text.toString(),"")
                     Log.d(passwordText.text.toString(),"")
@@ -93,10 +83,8 @@ class MainActivity : AppCompatActivity() {
                         passwordText.text.toString() == dados[i].Password
                     ) {
                         auth = true
-                        break
                     }
                 }
-
                 if (auth) {
                     userNameText.visibility = View.INVISIBLE
                     passwordText.visibility = View.INVISIBLE
@@ -104,18 +92,16 @@ class MainActivity : AppCompatActivity() {
                     tabLayout.visibility = View.VISIBLE
                     viewPager2.visibility = View.VISIBLE
                     Toast.makeText(
-                        this.applicationContext,
+                        this@MainActivity,
                         "Acesso disponibilizado",
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    Toast.makeText(this.applicationContext, "Acesso Negado", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@MainActivity, "Acesso Negado", Toast.LENGTH_LONG).show()
                 }
-
-                true
-            } else {
-                false
             }
         }
+
+
     }
 }
