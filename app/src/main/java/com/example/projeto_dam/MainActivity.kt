@@ -67,38 +67,46 @@ class MainActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
 
-                val response  = call!!.list().execute()
+            try {
+                val response = call!!.list().execute()
 
+                withContext(Dispatchers.Main) {
+                    if (response?.isSuccessful == true) {
+                        val apiResponse = response.body()
+                        if (apiResponse != null) {
+                            dados = apiResponse.folha2
+                            for (i in dados.indices) {
 
-            withContext(Dispatchers.Main) {
-                if(response.isSuccessful){
-                    dados = response.body()!!
-                } else {
-                    Toast.makeText(this@MainActivity, "Erro de Api", Toast.LENGTH_SHORT).show()
-                }
-                for (i in dados.indices) {
-                    Log.d(userNameText.text.toString(),"")
-                    Log.d(passwordText.text.toString(),"")
-                    if (userNameText.text.toString() == dados[i].Username &&
-                        passwordText.text.toString() == dados[i].Password
-                    ) {
-                        auth = true
+                                if (userNameText.text.toString() == dados[i].Username &&
+                                    passwordText.text.toString() == dados[i].Password
+                                ) {
+                                    auth = true
+                                }
+                            }
+                            if (auth) {
+                                userNameText.visibility = View.INVISIBLE
+                                passwordText.visibility = View.INVISIBLE
+                                passwordText.clearFocus()
+                                tabLayout.visibility = View.VISIBLE
+                                viewPager2.visibility = View.VISIBLE
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "Acesso disponibilizado",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                Toast.makeText(this@MainActivity, "Acesso Negado", Toast.LENGTH_LONG).show()
+                            }
+                        } else {
+                            Toast.makeText(this@MainActivity, "Empty or null response body", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(this@MainActivity, "Erro de Api", Toast.LENGTH_SHORT).show()
                     }
                 }
-                if (auth) {
-                    userNameText.visibility = View.INVISIBLE
-                    passwordText.visibility = View.INVISIBLE
-                    passwordText.clearFocus()
-                    tabLayout.visibility = View.VISIBLE
-                    viewPager2.visibility = View.VISIBLE
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Acesso disponibilizado",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    Toast.makeText(this@MainActivity, "Acesso Negado", Toast.LENGTH_LONG).show()
-                }
+            } catch (e: Exception) {
+                // Handle exceptions here
+                Log.e("API Call", "Exception: ${e.message}")
             }
         }
 
