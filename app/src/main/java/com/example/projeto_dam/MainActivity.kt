@@ -64,19 +64,13 @@ class MainActivity : AppCompatActivity() {
 
         imm?.hideSoftInputFromWindow(passwordText.windowToken, 0)
         val call = RetrofitInitializer().dadosService()
-
-        CoroutineScope(Dispatchers.IO).launch {
-
-            try {
                 val response = call!!.list().execute()
 
-                withContext(Dispatchers.Main) {
                     if (response?.isSuccessful == true) {
                         val apiResponse = response.body()
                         if (apiResponse != null) {
                             dados = apiResponse.folha2
                             for (i in dados.indices) {
-
                                 if (userNameText.text.toString() == dados[i].Username &&
                                     passwordText.text.toString() == dados[i].Password
                                 ) {
@@ -104,12 +98,6 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(this@MainActivity, "Erro de Api", Toast.LENGTH_SHORT).show()
                     }
                 }
-            } catch (e: Exception) {
-                // Handle exceptions here
-                Log.e("API Call", "Exception: ${e.message}")
-            }
+
         }
 
-
-    }
-}
