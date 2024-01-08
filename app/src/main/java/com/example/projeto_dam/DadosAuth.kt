@@ -1,3 +1,3 @@
 package com.example.projeto_dam
 
-class DadosAuth(val Username: String, val Password: String)
+abstract class DadosAuth(val id: String, val Username: String, val Password: String)
