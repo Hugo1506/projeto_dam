@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var viewPager2: ViewPager2
     private lateinit var myViewPagerAdapter: MyViewPagerAdapter
     private var dados: List<DadosAuth> = ArrayList()
-    private var auth: Boolean = false
+    private var isAuth: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +29,20 @@ class MainActivity : AppCompatActivity() {
         val userNameText = findViewById<EditText>(R.id.Username)
         val passwordText = findViewById<EditText>(R.id.Password)
         val imm = getSystemService<InputMethodManager>()
+
+        val call = RetrofitInitializer().dadosService()
+
+        CoroutineScope(Dispatchers.IO).launch{
+
+            val response = call?.list()
+
+            withContext(Dispatchers.Main) {
+
+                dados = response!!.folha2
+
+            }
+
+        }
 
         userNameText.requestFocus()
         imm?.showSoftInput(userNameText, InputMethodManager.SHOW_IMPLICIT)
@@ -63,41 +77,37 @@ class MainActivity : AppCompatActivity() {
         viewPager2.visibility = View.INVISIBLE
 
         imm?.hideSoftInputFromWindow(passwordText.windowToken, 0)
-        val call = RetrofitInitializer().dadosService()
-                val response = call!!.list().execute()
 
-                    if (response?.isSuccessful == true) {
-                        val apiResponse = response.body()
-                        if (apiResponse != null) {
-                            dados = apiResponse.folha2
-                            for (i in dados.indices) {
-                                if (userNameText.text.toString() == dados[i].Username &&
-                                    passwordText.text.toString() == dados[i].Password
-                                ) {
-                                    auth = true
-                                }
-                            }
-                            if (auth) {
-                                userNameText.visibility = View.INVISIBLE
-                                passwordText.visibility = View.INVISIBLE
-                                passwordText.clearFocus()
-                                tabLayout.visibility = View.VISIBLE
-                                viewPager2.visibility = View.VISIBLE
-                                Toast.makeText(
-                                    this@MainActivity,
-                                    "Acesso disponibilizado",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } else {
-                                Toast.makeText(this@MainActivity, "Acesso Negado", Toast.LENGTH_LONG).show()
-                            }
-                        } else {
-                            Toast.makeText(this@MainActivity, "Empty or null response body", Toast.LENGTH_SHORT).show()
-                        }
-                    } else {
-                        Toast.makeText(this@MainActivity, "Erro de Api", Toast.LENGTH_SHORT).show()
-                    }
-                }
+
+
+        CoroutineScope(Dispatchers.IO).launch{
+        
+        for (i in dados.indices) {
+            Log.d(userNameText.text.toString(), "")
+            Log.d(passwordText.text.toString(), "")
+            if (userNameText.text.toString() == dados[i].Username &&
+                passwordText.text.toString() == dados[i].Password
+            ) {
+                isAuth = true
+            }
+        }
+            withContext(Dispatchers.Main) {
+        if (isAuth) {
+            userNameText.visibility = View.INVISIBLE
+            passwordText.visibility = View.INVISIBLE
+            passwordText.clearFocus()
+            tabLayout.visibility = View.VISIBLE
+            viewPager2.visibility = View.VISIBLE
+            Toast.makeText(
+                this@MainActivity,
+                "Acesso disponibilizado",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            Toast.makeText(this@MainActivity, "Acesso Negado", Toast.LENGTH_LONG).show()
+        }
+            }
 
         }
-
+    }
+}
