@@ -1,3 +1,11 @@
 package com.example.projeto_dam
 
-abstract class DadosAuth(val id: String, val Username: String, val Password: String)
+data class DadosAuth(
+    val Username: String,
+    val Password: String,
+    val id: Int
+) {
+    override fun toString(): String {
+        return "DadosAuth(username='$Username', password='$Password', id=$id)"
+    }
+}

@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var viewPager2: ViewPager2
     private lateinit var myViewPagerAdapter: MyViewPagerAdapter
     private var dados: List<DadosAuth> = ArrayList()
-    private var auth: Boolean = false
+    private var isAuth: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,13 +32,13 @@ class MainActivity : AppCompatActivity() {
 
         val call = RetrofitInitializer().dadosService()
 
-        CoroutineScope(Dispatchers.Main).launch{
+        CoroutineScope(Dispatchers.IO).launch{
 
-            val response = call?.list()?.execute()
+            val response = call?.list()
 
             withContext(Dispatchers.Main) {
 
-                dados = response?.body()!!
+                dados = response!!.folha2
 
             }
 
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-            
+        CoroutineScope(Dispatchers.IO).launch{
         
         for (i in dados.indices) {
             Log.d(userNameText.text.toString(), "")
@@ -88,10 +88,11 @@ class MainActivity : AppCompatActivity() {
             if (userNameText.text.toString() == dados[i].Username &&
                 passwordText.text.toString() == dados[i].Password
             ) {
-                auth = true
+                isAuth = true
             }
         }
-        if (auth) {
+            withContext(Dispatchers.Main) {
+        if (isAuth) {
             userNameText.visibility = View.INVISIBLE
             passwordText.visibility = View.INVISIBLE
             passwordText.clearFocus()
@@ -105,6 +106,8 @@ class MainActivity : AppCompatActivity() {
         } else {
             Toast.makeText(this@MainActivity, "Acesso Negado", Toast.LENGTH_LONG).show()
         }
+            }
 
+        }
     }
 }
