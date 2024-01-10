@@ -3,6 +3,7 @@ package com.example.projeto_dam
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
@@ -14,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.await
 
 class MainActivity : AppCompatActivity() {
     lateinit var tabLayout: TabLayout
@@ -21,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var myViewPagerAdapter: MyViewPagerAdapter
     private var dados: List<DadosAuth> = ArrayList()
     private var isAuth: Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,15 +33,18 @@ class MainActivity : AppCompatActivity() {
         val passwordText = findViewById<EditText>(R.id.Password)
         val imm = getSystemService<InputMethodManager>()
 
-        val call = RetrofitInitializer().dadosService()
+        val call = RetrofitInitializer().dadosService()!!.list()
 
-        CoroutineScope(Dispatchers.IO).launch{
 
-            val response = call?.list()
+               CoroutineScope(Dispatchers.Main).launch{
 
-            withContext(Dispatchers.Main) {
+                  val response: ApiResponse = call.await()
 
-                dados = response!!.folha2
+
+                   withContext(Dispatchers.IO) {
+
+
+                dados = response.folha2
 
             }
 
@@ -49,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         if (!userNameText.hasFocus()) {
             passwordText.requestFocus()
         }
+
         tabLayout = findViewById(R.id.tab_layout)
         viewPager2 = findViewById(R.id.view_pager2)
 
@@ -76,38 +83,37 @@ class MainActivity : AppCompatActivity() {
         tabLayout.visibility = View.INVISIBLE
         viewPager2.visibility = View.INVISIBLE
 
-        imm?.hideSoftInputFromWindow(passwordText.windowToken, 0)
-
-
-
-        CoroutineScope(Dispatchers.IO).launch{
-        
-        for (i in dados.indices) {
-            Log.d(userNameText.text.toString(), "")
-            Log.d(passwordText.text.toString(), "")
-            if (userNameText.text.toString() == dados[i].Username &&
-                passwordText.text.toString() == dados[i].Password
-            ) {
-                isAuth = true
+        passwordText.setOnEditorActionListener { v , actionId , ev ->
+            if(actionId == EditorInfo.IME_ACTION_DONE) {
+                imm?.hideSoftInputFromWindow(passwordText.windowToken, 0)
+                for (i in dados.indices) {
+                    Log.d(userNameText.text.toString(), "")
+                    Log.d(passwordText.text.toString(), "")
+                    if (userNameText.text.toString() == dados[i].Username &&
+                        passwordText.text.toString() == dados[i].Password
+                    ) {
+                        isAuth = true
+                    }
+                }
+                if (isAuth) {
+                    userNameText.visibility = View.INVISIBLE
+                    passwordText.visibility = View.INVISIBLE
+                    passwordText.clearFocus()
+                    tabLayout.visibility = View.VISIBLE
+                    viewPager2.visibility = View.VISIBLE
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Acesso disponibilizado",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@setOnEditorActionListener true
+                } else {
+                    Toast.makeText(this@MainActivity, "Acesso Negado", Toast.LENGTH_LONG).show()
+                }
+            } else {
+                Toast.makeText(this@MainActivity, "Erro de input" ,Toast.LENGTH_SHORT).show()
             }
-        }
-            withContext(Dispatchers.Main) {
-        if (isAuth) {
-            userNameText.visibility = View.INVISIBLE
-            passwordText.visibility = View.INVISIBLE
-            passwordText.clearFocus()
-            tabLayout.visibility = View.VISIBLE
-            viewPager2.visibility = View.VISIBLE
-            Toast.makeText(
-                this@MainActivity,
-                "Acesso disponibilizado",
-                Toast.LENGTH_SHORT
-            ).show()
-        } else {
-            Toast.makeText(this@MainActivity, "Acesso Negado", Toast.LENGTH_LONG).show()
-        }
-            }
-
+                return@setOnEditorActionListener false
         }
     }
 }
