@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -99,6 +101,7 @@ class Fragmento2 : Fragment() {
 
                 // quando uma imagem é clicada
                 imageView.setOnClickListener {
+                    // Remove todas as views existentes do linearLayout
                     linearLayout.removeAllViews()
                     val clickedImageView = ImageView(requireContext())
                     clickedImageView.setImageBitmap(bitmap)
@@ -108,7 +111,36 @@ class Fragmento2 : Fragment() {
                     var layoutParams = LinearLayout.LayoutParams(imageSize, imageSize )
 
 
+                    // Cria um EditText
+                    val editText = EditText(requireContext())
+                    editText.hint = "Digite seu texto aqui..."
+
+                    // Cria um botão "Publicar"
+                    val publicarButton = Button(requireContext())
+                    publicarButton.text = "Publicar"
+                    publicarButton.setOnClickListener {
+                        // Lógica para publicar
+                        val textoDigitado = editText.text.toString()
+                        // Faça algo com o texto, como exibi-lo em um Toast
+                        Toast.makeText(requireContext(), "Texto publicado: $textoDigitado", Toast.LENGTH_SHORT).show()
+                    }
+
+                    // Cria um botão "Voltar"
+                    val voltarButton = Button(requireContext())
+                    voltarButton.text = "Voltar"
+                    voltarButton.setOnClickListener {
+                        val fragmentManager = requireActivity().supportFragmentManager
+                        val fragmentTransaction = fragmentManager.beginTransaction()
+                        fragmentTransaction.replace(androidx.fragment.R.id., Fragmento2.newInstance("", ""))
+                        fragmentTransaction.addToBackStack(null)
+                        fragmentTransaction.commit()
+                    }
+
+                    // Adiciona as views ao linearLayout
                     linearLayout.addView(clickedImageView, layoutParams)
+                    linearLayout.addView(editText)
+                    linearLayout.addView(publicarButton)
+                    linearLayout.addView(voltarButton)
                 }
             }
         }
