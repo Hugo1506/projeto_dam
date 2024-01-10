@@ -129,12 +129,11 @@ class Fragmento2 : Fragment() {
                     val voltarButton = Button(requireContext())
                     voltarButton.text = "Voltar"
                     voltarButton.setOnClickListener {
-                        val fragmentManager = requireActivity().supportFragmentManager
-                        val fragmentTransaction = fragmentManager.beginTransaction()
-                        fragmentTransaction.replace(androidx.fragment.R.id., Fragmento2.newInstance("", ""))
-                        fragmentTransaction.addToBackStack(null)
-                        fragmentTransaction.commit()
-                    }
+                        val transaction = requireActivity().supportFragmentManager.beginTransaction()
+                        linearLayout.removeAllViews()
+                        transaction.replace(R.id.container, Fragmento2())
+                        transaction.addToBackStack(null)
+                        transaction.commit()                    }
 
                     // Adiciona as views ao linearLayout
                     linearLayout.addView(clickedImageView, layoutParams)
