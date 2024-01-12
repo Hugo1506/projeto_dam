@@ -13,5 +13,6 @@ class RetrofitInitializer {
         .client(okHTTP)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
-    fun dadosService(): Auth? = retrofit.create(Auth::class.java)
+    fun dadosResposta(): Auth? = retrofit.create(Auth::class.java)
+    fun dadosFoto(fotoAEnviar: fotoEnviar) = retrofit.create(fotoEnviar::class.java)
 }

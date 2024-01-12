@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.Gravity
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -108,7 +108,7 @@ class Fragmento2 : Fragment() {
 
                     // tamanho da imagem
                     imageSize = 500
-                    var layoutParams = LinearLayout.LayoutParams(imageSize, imageSize )
+                    layoutParams = LinearLayout.LayoutParams(imageSize, imageSize )
 
 
                     // Cria um EditText
@@ -117,17 +117,18 @@ class Fragmento2 : Fragment() {
 
                     // Cria um botão "Publicar"
                     val publicarButton = Button(requireContext())
-                    publicarButton.text = "Publicar"
+                    publicarButton.setText(getString(R.string.publicar_bt))
                     publicarButton.setOnClickListener {
                         // Lógica para publicar
                         val textoDigitado = editText.text.toString()
+
                         // Faça algo com o texto, como exibi-lo em um Toast
                         Toast.makeText(requireContext(), "Texto publicado: $textoDigitado", Toast.LENGTH_SHORT).show()
                     }
 
                     // Cria um botão "Voltar"
                     val voltarButton = Button(requireContext())
-                    voltarButton.text = "Voltar"
+                    voltarButton.setText(getString(R.string.voltar_bt))
                     voltarButton.setOnClickListener {
                         val transaction = requireActivity().supportFragmentManager.beginTransaction()
                         linearLayout.removeAllViews()
@@ -151,10 +152,10 @@ class Fragmento2 : Fragment() {
 
     private fun getImage(i:Int): Bitmap? {
         val directory: File = requireContext().filesDir
-        val file: File = File(directory, i.toString() + ".bit")
+        val file = File(directory, i.toString() + ".bit")
 
         try {
-            val fi: FileInputStream = FileInputStream(file)
+            val fi = FileInputStream(file)
             // transforma o png num bitmap
             val bitmap: Bitmap = BitmapFactory.decodeStream(fi)
             fi.close()
@@ -175,7 +176,7 @@ class Fragmento2 : Fragment() {
     //devolve o numero de fotos
     private fun getNumFotos() : Int {
         val directory: File = requireContext().filesDir
-        val f: File = File(directory, "nomes.txt")
+        val f = File(directory, "nomes.txt")
 
             val currentNumber: Int = try {
                 f.readText(Charsets.UTF_8).toInt()
