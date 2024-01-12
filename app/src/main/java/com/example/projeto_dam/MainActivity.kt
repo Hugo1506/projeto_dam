@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         val passwordText = findViewById<EditText>(R.id.Password)
         val imm = getSystemService<InputMethodManager>()
 
-        val call = RetrofitInitializer().dadosService()!!.list()
+        val call = RetrofitInitializer().dadosResposta()!!.list()
 
 
                CoroutineScope(Dispatchers.Main).launch{
