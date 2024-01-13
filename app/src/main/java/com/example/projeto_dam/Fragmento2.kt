@@ -154,6 +154,7 @@ class Fragmento2 : Fragment() {
 
                                 withContext(Dispatchers.IO) {
                                     Log.d("Publish", "Texto publicado: $textoDigitado")
+
                                 }
                             } catch (e: Exception) {
                                 Log.e("Publish", "Erro ao publicar: ${e.message}", e)
