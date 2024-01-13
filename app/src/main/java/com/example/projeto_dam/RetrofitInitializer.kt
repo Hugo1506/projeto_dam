@@ -14,5 +14,5 @@ class RetrofitInitializer {
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
     fun dadosResposta(): Auth? = retrofit.create(Auth::class.java)
-    fun dadosFoto(fotoAEnviar: fotoEnviar) = retrofit.create(fotoEnviar::class.java)
+    fun dadosFoto(): fotoEnviar = retrofit.create(fotoEnviar::class.java)
 }

@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.CoroutineScope
@@ -19,6 +20,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.await
 
 class MainActivity : AppCompatActivity() {
+    lateinit var viewModel: dadosViewModel
     lateinit var tabLayout: TabLayout
     lateinit var viewPager2: ViewPager2
     private lateinit var myViewPagerAdapter: MyViewPagerAdapter
@@ -34,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         val userNameText = findViewById<EditText>(R.id.Username)
         val passwordText = findViewById<EditText>(R.id.Password)
         val imm = getSystemService<InputMethodManager>()
-
+        viewModel = ViewModelProvider(this).get(dadosViewModel::class.java)
         val call = RetrofitInitializer().dadosResposta()!!.list()
 
 
@@ -94,6 +96,7 @@ class MainActivity : AppCompatActivity() {
                     if (userNameText.text.toString() == dados[i].Username &&
                         passwordText.text.toString() == dados[i].Password
                     ) {
+                        viewModel.user = userNameText.text.toString()
                         isAuth = true
                     }
                 }
