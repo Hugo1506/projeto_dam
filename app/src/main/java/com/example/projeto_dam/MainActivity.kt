@@ -2,7 +2,6 @@ package com.example.projeto_dam
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -11,13 +10,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.await
 
 class MainActivity : AppCompatActivity() {
     lateinit var viewModel: dadosViewModel
@@ -36,8 +31,8 @@ class MainActivity : AppCompatActivity() {
         val userNameText = findViewById<EditText>(R.id.Username)
         val passwordText = findViewById<EditText>(R.id.Password)
         val imm = getSystemService<InputMethodManager>()
-        viewModel = ViewModelProvider(this).get(dadosViewModel::class.java)
-        val call = RetrofitInitializer().dadosResposta()!!.list()
+        viewModel = ViewModelProvider(this).get<dadosViewModel>()
+        /*val call = RetrofitInitializer().dadosResposta()!!.list()
 
 
                CoroutineScope(Dispatchers.Main).launch{
@@ -52,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
             }
 
-        }
+        }*/
 
         userNameText.requestFocus()
         imm?.showSoftInput(userNameText, InputMethodManager.SHOW_IMPLICIT)
@@ -90,16 +85,16 @@ class MainActivity : AppCompatActivity() {
         passwordText.setOnEditorActionListener { v , actionId , ev ->
             if(actionId == EditorInfo.IME_ACTION_DONE) {
                 imm?.hideSoftInputFromWindow(passwordText.windowToken, 0)
-                for (i in dados.indices) {
+                /*for (i in dados.indices) {
                     Log.d(userNameText.text.toString(), "")
                     Log.d(passwordText.text.toString(), "")
                     if (userNameText.text.toString() == dados[i].Username &&
                         passwordText.text.toString() == dados[i].Password
-                    ) {
+                    ) {*/
                         viewModel.user = userNameText.text.toString()
                         isAuth = true
-                    }
-                }
+                    /*}
+                }*/
                 if (isAuth) {
                     userNameText.visibility = View.INVISIBLE
                     passwordText.visibility = View.INVISIBLE
