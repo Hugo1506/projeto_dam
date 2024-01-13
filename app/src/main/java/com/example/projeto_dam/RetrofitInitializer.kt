@@ -1,6 +1,7 @@
 package com.example.projeto_dam
 
 import com.google.gson.GsonBuilder
+import fotoEnviar
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

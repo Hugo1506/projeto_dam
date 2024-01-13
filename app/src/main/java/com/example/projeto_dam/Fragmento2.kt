@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Base64
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -47,7 +48,8 @@ class Fragmento2 : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(dadosViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(dadosViewModel::class.java)
+
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -135,40 +137,42 @@ class Fragmento2 : Fragment() {
                     // Cria um botão "Publicar"
                     val publicarButton = Button(requireContext())
                     publicarButton.setText(getString(R.string.publicar_bt))
+                    publicarButton.setOnClickListener {
+                        // Lógica para publicar
+                        val textoDigitado = editText.text.toString()
+                        val byteOPS = ByteArrayOutputStream()
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteOPS)
+                        val bytes: ByteArray = byteOPS.toByteArray()
+                        val encoded = Base64.encodeToString(bytes, Base64.DEFAULT)
+                        val fotoDadoAEnviar = fotoDados(encoded, textoDigitado, viewModel.user)
+                        val fotoDadoWrapper = fotoEnviar.fotoDadosWrapper(fotoDadoAEnviar)
+                        val send = RetrofitInitializer().dadosFoto()
+
+                        CoroutineScope(Dispatchers.Main).launch {
+                            try {
+                                send.publicar(fotoDadoWrapper).await()
+
+                                withContext(Dispatchers.IO) {
+                                    Log.d("Publish", "Texto publicado: $textoDigitado")
+                                }
+                            } catch (e: Exception) {
+                                Log.e("Publish", "Erro ao publicar: ${e.message}", e)
+
+                            }
+                        }
+                    }
+
+
                     editText.setOnEditorActionListener { v, action, ev ->
                         if (action == EditorInfo.IME_ACTION_DONE) {
                             imm?.hideSoftInputFromWindow(editText.windowToken, 0)
-                            publicarButton.setOnClickListener {
-                                // Lógica para publicar
-                                val textoDigitado = editText.text.toString()
-                                val byteOPS = ByteArrayOutputStream()
-                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteOPS)
-                                val bytes: ByteArray = byteOPS.toByteArray()
-                                val encoded = Base64.encode(bytes, Base64.DEFAULT).toString()
-                                val fotoDadoAEnviar = fotoDados(encoded, textoDigitado, viewModel.user)
-                                val send = RetrofitInitializer().dadosFoto()
-                                CoroutineScope(Dispatchers.Main).launch {
-
-                                    send.publicar(fotoDadoAEnviar).await()
-
-                                    withContext(Dispatchers.IO) {
-
-                                        // Faça algo com o texto, como exibi-lo em um Toast
-                                        Toast.makeText(
-                                            requireContext(),
-                                            "Texto publicado: $textoDigitado",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-
-                                    }
-
-                                }
-
-                            }
+                            // Trigger the click action for publicarButton
+                            publicarButton.performClick()
                             return@setOnEditorActionListener true
                         }
                         return@setOnEditorActionListener false
                     }
+
 
                     // Cria um botão "Voltar"
                     val voltarButton = Button(requireContext())
@@ -230,6 +234,8 @@ class Fragmento2 : Fragment() {
             return currentNumber
 
     }
+
+
 
 
 
