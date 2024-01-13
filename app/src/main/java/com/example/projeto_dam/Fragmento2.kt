@@ -3,16 +3,27 @@ package com.example.projeto_dam
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Base64
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.await
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -32,9 +43,11 @@ class Fragmento2 : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    lateinit var viewModel: dadosViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(this).get(dadosViewModel::class.java)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -64,6 +77,7 @@ class Fragmento2 : Fragment() {
     private fun ler() {
 
         val bitmapList: ArrayList<Bitmap?> = ArrayList()
+        val imm = getSystemService<InputMethodManager>(this.requireContext(), InputMethodManager::class.java)
         for (i in 0 until getNumFotos()) {
             bitmapList.add(getImage(i))
         }
@@ -113,17 +127,47 @@ class Fragmento2 : Fragment() {
 
                     // Cria um EditText
                     val editText = EditText(requireContext())
+                    editText.imeOptions = EditorInfo.IME_ACTION_DONE
                     editText.hint = "Digite seu texto aqui..."
+                    editText.requestFocus()
+
 
                     // Cria um botão "Publicar"
                     val publicarButton = Button(requireContext())
                     publicarButton.setText(getString(R.string.publicar_bt))
-                    publicarButton.setOnClickListener {
-                        // Lógica para publicar
-                        val textoDigitado = editText.text.toString()
+                    editText.setOnEditorActionListener { v, action, ev ->
+                        if (action == EditorInfo.IME_ACTION_DONE) {
+                            imm?.hideSoftInputFromWindow(editText.windowToken, 0)
+                            publicarButton.setOnClickListener {
+                                // Lógica para publicar
+                                val textoDigitado = editText.text.toString()
+                                val byteOPS = ByteArrayOutputStream()
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteOPS)
+                                val bytes: ByteArray = byteOPS.toByteArray()
+                                val encoded = Base64.encode(bytes, Base64.DEFAULT).toString()
+                                val fotoDadoAEnviar = fotoDados(encoded, textoDigitado, viewModel.user)
+                                val send = RetrofitInitializer().dadosFoto()
+                                CoroutineScope(Dispatchers.Main).launch {
 
-                        // Faça algo com o texto, como exibi-lo em um Toast
-                        Toast.makeText(requireContext(), "Texto publicado: $textoDigitado", Toast.LENGTH_SHORT).show()
+                                    send.publicar(fotoDadoAEnviar).await()
+
+                                    withContext(Dispatchers.IO) {
+
+                                        // Faça algo com o texto, como exibi-lo em um Toast
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Texto publicado: $textoDigitado",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+
+                                    }
+
+                                }
+
+                            }
+                            return@setOnEditorActionListener true
+                        }
+                        return@setOnEditorActionListener false
                     }
 
                     // Cria um botão "Voltar"
