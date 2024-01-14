@@ -16,6 +16,7 @@ class MyViewPagerAdapter(fragmentActivity: FragmentActivity): FragmentStateAdapt
             0 -> return Fragmento1()
             1 -> return Fragmento2()
             2 -> return Fragmento3()
+            3 -> return Fragmento4()
             else -> return Fragmento1()
         }
     }
