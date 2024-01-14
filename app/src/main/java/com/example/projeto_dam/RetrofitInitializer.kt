@@ -16,4 +16,5 @@ class RetrofitInitializer {
         .build()
     fun dadosResposta(): Auth? = retrofit.create(Auth::class.java)
     fun dadosFoto(): fotoEnviar = retrofit.create(fotoEnviar::class.java)
+    fun dadosFotosResposta(): fotosResposta? = retrofit.create(fotosResposta::class.java)
 }
