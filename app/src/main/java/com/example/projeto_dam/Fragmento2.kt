@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import fotoEnviar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,10 +47,10 @@ class Fragmento2 : Fragment() {
     private var param2: String? = null
     lateinit var viewModel: dadosViewModel
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(dadosViewModel::class.java)
-
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -79,7 +80,7 @@ class Fragmento2 : Fragment() {
     private fun ler() {
 
         val bitmapList: ArrayList<Bitmap?> = ArrayList()
-        val imm = getSystemService<InputMethodManager>(this.requireContext(), InputMethodManager::class.java)
+        val imm = getSystemService(requireContext(), InputMethodManager::class.java)
         for (i in 0 until getNumFotos()) {
             bitmapList.add(getImage(i))
         }
@@ -130,13 +131,51 @@ class Fragmento2 : Fragment() {
                     // Cria um EditText
                     val editText = EditText(requireContext())
                     editText.imeOptions = EditorInfo.IME_ACTION_DONE
+                    editText.isFocusable = true
                     editText.hint = "Digite seu texto aqui..."
+                    editText.isSingleLine = true
                     editText.requestFocus()
 
 
                     // Cria um botão "Publicar"
                     val publicarButton = Button(requireContext())
                     publicarButton.setText(getString(R.string.publicar_bt))
+                    editText.setOnEditorActionListener { v, action, ev ->
+                        if (action == EditorInfo.IME_ACTION_DONE) {
+                            imm?.hideSoftInputFromWindow(editText.windowToken, 0)
+                            editText.clearFocus()
+                            // Lógica para publicar
+                            val textoDigitado = editText.text.toString()
+                            val byteOPS = ByteArrayOutputStream()
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteOPS)
+                            val bytes: ByteArray = byteOPS.toByteArray()
+                            val encoded = Base64.encodeToString(bytes, Base64.DEFAULT)
+                            val fotoDadoAEnviar = fotoDados(encoded, textoDigitado, viewModel.user)
+                            val fotoDadoWrapper = fotoEnviar.fotoDadosWrapper(fotoDadoAEnviar)
+                            val send = RetrofitInitializer().dadosFoto()
+
+                            CoroutineScope(Dispatchers.Main).launch {
+                                try {
+                                    send.publicar(fotoDadoWrapper).await()
+
+                                    withContext(Dispatchers.IO) {
+                                        Log.d("Publish", "Texto publicado: $textoDigitado")
+
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e("Publish", "Erro ao publicar: ${e.message}", e)
+
+                                }
+                            }
+                            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+                            linearLayout.removeAllViews()
+                            transaction.replace(R.id.container, Fragmento2())
+                            transaction.addToBackStack(null)
+                            transaction.commit()
+                            return@setOnEditorActionListener true
+                        }
+                        return@setOnEditorActionListener false
+                    }
                     publicarButton.setOnClickListener {
                         // Lógica para publicar
                         val textoDigitado = editText.text.toString()
@@ -161,24 +200,25 @@ class Fragmento2 : Fragment() {
 
                             }
                         }
+                        imm?.hideSoftInputFromWindow(editText.windowToken, 0)
+                        editText.clearFocus()
+                        // Trigger the click action for publicarButton
+                        val transaction = requireActivity().supportFragmentManager.beginTransaction()
+                        linearLayout.removeAllViews()
+                        transaction.replace(R.id.container, Fragmento2())
+                        transaction.addToBackStack(null)
+                        transaction.commit()
                     }
 
 
-                    editText.setOnEditorActionListener { v, action, ev ->
-                        if (action == EditorInfo.IME_ACTION_DONE) {
-                            imm?.hideSoftInputFromWindow(editText.windowToken, 0)
-                            // Trigger the click action for publicarButton
-                            publicarButton.performClick()
-                            return@setOnEditorActionListener true
-                        }
-                        return@setOnEditorActionListener false
-                    }
 
 
                     // Cria um botão "Voltar"
                     val voltarButton = Button(requireContext())
                     voltarButton.setText(getString(R.string.voltar_bt))
                     voltarButton.setOnClickListener {
+                        imm?.hideSoftInputFromWindow(editText.windowToken, 0)
+                        editText.clearFocus()
                         val transaction = requireActivity().supportFragmentManager.beginTransaction()
                         linearLayout.removeAllViews()
                         transaction.replace(R.id.container, Fragmento2())
@@ -235,8 +275,6 @@ class Fragmento2 : Fragment() {
             return currentNumber
 
     }
-
-
 
 
 

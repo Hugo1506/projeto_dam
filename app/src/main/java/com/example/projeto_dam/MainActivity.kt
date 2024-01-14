@@ -91,10 +91,10 @@ class MainActivity : AppCompatActivity() {
                     if (userNameText.text.toString() == dados[i].Username &&
                         passwordText.text.toString() == dados[i].Password
                     ) {*/
-                viewModel.user = userNameText.text.toString()
-                isAuth = true
-                /*}
-            }*/
+                        viewModel.user = userNameText.text.toString()
+                        isAuth = true
+                    /*}
+                }*/
                 if (isAuth) {
                     userNameText.visibility = View.INVISIBLE
                     passwordText.visibility = View.INVISIBLE
@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this@MainActivity, "Erro de input" ,Toast.LENGTH_SHORT).show()
             }
-            return@setOnEditorActionListener false
+                return@setOnEditorActionListener false
         }
     }
 }
