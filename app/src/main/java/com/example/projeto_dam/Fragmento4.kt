@@ -26,7 +26,7 @@ class Fragmento4 : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(dadosViewModel::class.java)
-        lerFotos()
+        //lerFotos()
         }
 
 

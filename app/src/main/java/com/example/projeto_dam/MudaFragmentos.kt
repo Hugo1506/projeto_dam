@@ -8,7 +8,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 class MyViewPagerAdapter(fragmentActivity: FragmentActivity): FragmentStateAdapter(fragmentActivity) {
 
     override fun getItemCount(): Int {
-        return 3
+        return 4
     }
 
     override fun createFragment(position: Int): Fragment {
@@ -16,6 +16,7 @@ class MyViewPagerAdapter(fragmentActivity: FragmentActivity): FragmentStateAdapt
             0 -> return Fragmento1()
             1 -> return Fragmento2()
             2 -> return Fragmento3()
+            3 -> return Fragmento4()
             else -> return Fragmento1()
         }
     }
