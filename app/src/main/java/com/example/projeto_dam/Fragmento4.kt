@@ -55,18 +55,20 @@ class Fragmento4 : Fragment() {
         val call = RetrofitInitializer().dadosFotosResposta()!!.listFotos()
 
 
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.IO).launch {
 
             val response: ApiResponseFotos = call.await()
 
 
-            withContext(Dispatchers.IO) {
+            withContext(Dispatchers.Main) {
 
 
                 dados = response.folha1
                 for (i in dados.indices) {
                     if (dados[i].User == viewModel.user){
-                        val bytes = Base64.decode (dados[i].fotob64, 0)
+                        val cleanImage: String = dados[i].fotob64.replace("data:image/png;base64,", "")
+                            .replace("data:image/jpeg;base64,", "")
+                        val bytes: ByteArray = Base64.decode(cleanImage, Base64.DEFAULT)
                         bitmapList.add(BitmapFactory.decodeByteArray(bytes , 0, bytes.size ))
                     }
                 }
@@ -91,6 +93,7 @@ class Fragmento4 : Fragment() {
                     }
                     if (bitmap != null) {
                         val imageView = ImageView(requireContext())
+
                         imageView.setImageBitmap(bitmap)
 
                         // tamanho da imagem e margens

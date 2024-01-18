@@ -12,12 +12,12 @@ class MyViewPagerAdapter(fragmentActivity: FragmentActivity): FragmentStateAdapt
     }
 
     override fun createFragment(position: Int): Fragment {
-        when(position) {
-            0 -> return Fragmento1()
-            1 -> return Fragmento2()
-            2 -> return Fragmento3()
-            3 -> return Fragmento4()
-            else -> return Fragmento1()
+        return when(position) {
+            0 -> Fragmento1()
+            1 -> Fragmento2()
+            2 -> Fragmento3()
+            3 -> Fragmento4()
+            else -> Fragmento1()
         }
     }
 
