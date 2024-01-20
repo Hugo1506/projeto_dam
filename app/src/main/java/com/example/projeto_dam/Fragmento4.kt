@@ -47,7 +47,10 @@ class Fragmento4 : Fragment() {
     //volta a ler as imagens exitentes para garantir que as imagens criadas depois do inicio da app são mostradass
     override fun onResume() {
         super.onResume()
-        lerFotos()
+        if(viewModel.fotoNova){
+            lerFotos()
+            viewModel.fotoNova = false
+        }
     }
 
     private fun lerFotos() {
