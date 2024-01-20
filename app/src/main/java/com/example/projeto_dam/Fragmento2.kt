@@ -75,6 +75,12 @@ class Fragmento2 : Fragment() {
         ler()
     }
 
+    override fun onPause() {
+        super.onPause()
+        val linearLayout: LinearLayout = requireView().findViewById(R.id.linear)
+        linearLayout.removeAllViews()
+    }
+
 
 
     private fun ler() {
@@ -191,6 +197,7 @@ class Fragmento2 : Fragment() {
                             try {
                                 send.publicar(fotoDadoWrapper).await()
 
+                                viewModel.fotoNova = true
                                 withContext(Dispatchers.IO) {
                                     Log.d("Publish", "Texto publicado: $textoDigitado")
 
