@@ -82,6 +82,7 @@ class Fragmento2 : Fragment() {
     }
 
 
+
     private fun ler() {
 
         val bitmapList: ArrayList<Bitmap?> = ArrayList()
@@ -162,7 +163,7 @@ class Fragmento2 : Fragment() {
                             CoroutineScope(Dispatchers.Main).launch {
                                 try {
                                     send.publicar(fotoDadoWrapper).await()
-                                    viewModel.fotoNova = true
+
                                     withContext(Dispatchers.IO) {
                                         Log.d("Publish", "Texto publicado: $textoDigitado")
 
@@ -196,6 +197,7 @@ class Fragmento2 : Fragment() {
                             try {
                                 send.publicar(fotoDadoWrapper).await()
 
+                                viewModel.fotoNova = true
                                 withContext(Dispatchers.IO) {
                                     Log.d("Publish", "Texto publicado: $textoDigitado")
 
