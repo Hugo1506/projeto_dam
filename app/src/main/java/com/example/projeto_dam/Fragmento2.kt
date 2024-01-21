@@ -77,9 +77,8 @@ class Fragmento2 : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        val linearLayout: LinearLayout = requireView().findViewById(R.id.linear)
-        linearLayout.removeAllViews()
     }
+
 
 
 
@@ -174,7 +173,7 @@ class Fragmento2 : Fragment() {
                                 }
                             }
                             val transaction = requireActivity().supportFragmentManager.beginTransaction()
-                            linearLayout.removeAllViews()
+                            linearLayout.removeAllViewsInLayout()
                             transaction.replace(R.id.container, Fragmento2())
                             transaction.addToBackStack(null)
                             transaction.commit()
@@ -209,12 +208,7 @@ class Fragmento2 : Fragment() {
                         }
                         imm?.hideSoftInputFromWindow(editText.windowToken, 0)
                         editText.clearFocus()
-                        // Trigger the click action for publicarButton
-                        val transaction = requireActivity().supportFragmentManager.beginTransaction()
-                        linearLayout.removeAllViews()
-                        transaction.replace(R.id.container, Fragmento2())
-                        transaction.addToBackStack(null)
-                        transaction.commit()
+                        ler()
                     }
 
 
@@ -226,11 +220,8 @@ class Fragmento2 : Fragment() {
                     voltarButton.setOnClickListener {
                         imm?.hideSoftInputFromWindow(editText.windowToken, 0)
                         editText.clearFocus()
-                        val transaction = requireActivity().supportFragmentManager.beginTransaction()
-                        linearLayout.removeAllViews()
-                        transaction.replace(R.id.container, Fragmento2())
-                        transaction.addToBackStack(null)
-                        transaction.commit()                    }
+                        ler()
+                    }
 
                     // Adiciona as views ao linearLayout
                     linearLayout.addView(clickedImageView, layoutParams)

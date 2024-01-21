@@ -51,6 +51,7 @@ class Fragmento4 : Fragment() {
             viewModel.fotoNova = false
         } else {
             val linearLayout: LinearLayout = requireView().findViewById(R.id.verfotosLinear)
+            linearLayout.removeAllViews()
             // Define que apenas podem haver 2 imagens por linha
             val imagesPerRow = 2
             var currentRow: LinearLayout? = null
@@ -95,10 +96,7 @@ class Fragmento4 : Fragment() {
                         voltarButton.setText(getString(R.string.voltar_bt))
                         voltarButton.setOnClickListener {
                             linearLayout.removeAllViews()
-                            val transaction = requireActivity().supportFragmentManager.beginTransaction()
-                            transaction.replace(R.id.container, Fragmento4())
-                            transaction.addToBackStack(null)
-                            transaction.commit()
+                            lerFotos()
                         }
 
                         // Adiciona as views ao linearLayout
