@@ -27,8 +27,8 @@ class Fragmento4 : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(dadosViewModel::class.java)
-        lerFotos()
-        }
+
+    }
 
 
     override fun onCreateView(
@@ -36,6 +36,7 @@ class Fragmento4 : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        lerFotos()
         return inflater.inflate(R.layout.fragment_fragmento4, container, false)
     }
 
@@ -46,12 +47,12 @@ class Fragmento4 : Fragment() {
     //volta a ler as imagens exitentes para garantir que as imagens criadas depois do inicio da app são mostradass
     override fun onResume() {
         super.onResume()
+        val linearLayout: LinearLayout = requireView().findViewById(R.id.verfotosLinear)
+        linearLayout.removeAllViews()
         if(viewModel.fotoNova){
             lerFotos()
             viewModel.fotoNova = false
         } else {
-            val linearLayout: LinearLayout = requireView().findViewById(R.id.verfotosLinear)
-            linearLayout.removeAllViews()
             // Define que apenas podem haver 2 imagens por linha
             val imagesPerRow = 2
             var currentRow: LinearLayout? = null
@@ -70,40 +71,40 @@ class Fragmento4 : Fragment() {
 
                 }
 
-                    val imageView = ImageView(requireContext())
+                val imageView = ImageView(requireContext())
 
-                    imageView.setImageBitmap(bitmap)
+                imageView.setImageBitmap(bitmap)
 
-                    // tamanho da imagem e margens
-                    var imageSize = 220
-                    var layoutParams = LinearLayout.LayoutParams(imageSize, imageSize + 45)
-                    layoutParams.setMargins(10, 0, 0, 50)
+                // tamanho da imagem e margens
+                var imageSize = 220
+                var layoutParams = LinearLayout.LayoutParams(imageSize, imageSize + 45)
+                layoutParams.setMargins(10, 0, 0, 50)
 
-                    currentRow?.addView(imageView, layoutParams)
+                currentRow?.addView(imageView, layoutParams)
 
-                    // quando uma imagem é clicada
-                    imageView.setOnClickListener {
-                        // Remove todas as views existentes do linearLayout
+                // quando uma imagem é clicada
+                imageView.setOnClickListener {
+                    // Remove todas as views existentes do linearLayout
+                    linearLayout.removeAllViews()
+                    val clickedImageView = ImageView(requireContext())
+                    clickedImageView.setImageBitmap(bitmap)
+
+                    // tamanho da imagem
+                    imageSize = 400
+                    layoutParams = LinearLayout.LayoutParams(imageSize, imageSize)
+
+                    val voltarButton = Button(requireContext())
+                    voltarButton.setText(getString(R.string.voltar_bt))
+                    voltarButton.setOnClickListener {
                         linearLayout.removeAllViews()
-                        val clickedImageView = ImageView(requireContext())
-                        clickedImageView.setImageBitmap(bitmap)
-
-                        // tamanho da imagem
-                        imageSize = 400
-                        layoutParams = LinearLayout.LayoutParams(imageSize, imageSize)
-
-                        val voltarButton = Button(requireContext())
-                        voltarButton.setText(getString(R.string.voltar_bt))
-                        voltarButton.setOnClickListener {
-                            linearLayout.removeAllViews()
-                            lerFotos()
-                        }
-
-                        // Adiciona as views ao linearLayout
-                        linearLayout.addView(voltarButton)
-                        linearLayout.addView(clickedImageView, layoutParams)
-
+                        lerFotos()
                     }
+
+                    // Adiciona as views ao linearLayout
+                    linearLayout.addView(voltarButton)
+                    linearLayout.addView(clickedImageView, layoutParams)
+
+                }
 
 
 
