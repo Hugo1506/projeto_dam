@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -19,7 +18,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.w3c.dom.Text
 import retrofit2.await
 
 class Fragmento4 : Fragment() {
@@ -199,7 +197,7 @@ class Fragmento4 : Fragment() {
                             layoutParams = LinearLayout.LayoutParams(imageSize, imageSize)
 
                             val desc = TextView(requireContext())
-                            desc.setText(viewModel.descrF4[index])
+                            desc.text = viewModel.descrF4[index]
 
                             val voltarButton = Button(requireContext())
                             voltarButton.setText(getString(R.string.voltar_bt))
