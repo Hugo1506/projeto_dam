@@ -162,7 +162,6 @@ class Fragmento2 : Fragment() {
                             CoroutineScope(Dispatchers.Main).launch {
                                 try {
                                     send.publicar(fotoDadoWrapper).await()
-
                                     withContext(Dispatchers.IO) {
                                         Log.d("Publish", "Texto publicado: $textoDigitado")
 

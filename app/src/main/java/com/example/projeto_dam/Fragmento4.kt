@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.CoroutineScope
@@ -140,6 +141,7 @@ class Fragmento4 : Fragment() {
                             .replace("data:image/jpeg;base64,", "")
                         val bytes: ByteArray = Base64.decode(cleanImage, Base64.DEFAULT)
                         bitmapList.add(BitmapFactory.decodeByteArray(bytes , 0, bytes.size ))
+                        val descricao = dados[i].Descricao
                         if(!viewModel.fotosF4.contains(BitmapFactory.decodeByteArray(bytes , 0, bytes.size ))) {
                             viewModel.fotosF4.add(
                                 BitmapFactory.decodeByteArray(
@@ -148,6 +150,7 @@ class Fragmento4 : Fragment() {
                                     bytes.size
                                 )
                             )
+                            viewModel.descrF4.add(descricao)
                         }
                     }
                 }
@@ -193,6 +196,9 @@ class Fragmento4 : Fragment() {
                             imageSize = 400
                             layoutParams = LinearLayout.LayoutParams(imageSize, imageSize)
 
+                            val desc = TextView(requireContext())
+                            desc.text = viewModel.descrF4[index]
+
                             val voltarButton = Button(requireContext())
                             voltarButton.setText(getString(R.string.voltar_bt))
                             voltarButton.setOnClickListener {
@@ -205,6 +211,7 @@ class Fragmento4 : Fragment() {
                             // Adiciona as views ao linearLayout
                             linearLayout.addView(clickedImageView, layoutParams)
                             linearLayout.addView(voltarButton)
+                            linearLayout.addView(desc)
 
                         }
 
