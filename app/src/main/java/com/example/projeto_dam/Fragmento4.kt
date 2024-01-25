@@ -37,12 +37,12 @@ class Fragmento4 : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        lerFotos()
         return inflater.inflate(R.layout.fragment_fragmento4, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        lerFotos()
     }
 
     //volta a ler as imagens exitentes para garantir que as imagens criadas depois do inicio da app são mostradass
@@ -50,6 +50,8 @@ class Fragmento4 : Fragment() {
         super.onResume()
         val linearLayout: LinearLayout = requireView().findViewById(R.id.verfotosLinear)
         linearLayout.removeAllViews()
+        linearLayout.orientation = LinearLayout.VERTICAL
+        linearLayout.setPadding(5,5,5,5)
         if(viewModel.fotoNova){
             lerFotos()
             viewModel.fotoNova = false
@@ -57,7 +59,6 @@ class Fragmento4 : Fragment() {
             // Define que apenas podem haver 2 imagens por linha
             val imagesPerRow = 2
             var currentRow: LinearLayout? = null
-
             for ((index, bitmap) in viewModel.fotosF4.withIndex()) {
                 // quando o index é par ou seja de duas em duas imagens é criado uma nova linha que vai armazenar as imagens
                 if (index % imagesPerRow == 0) {
@@ -79,7 +80,7 @@ class Fragmento4 : Fragment() {
                 // tamanho da imagem e margens
                 var imageSize = 220
                 var layoutParams = LinearLayout.LayoutParams(imageSize, imageSize + 45)
-                layoutParams.setMargins(10, 0, 0, 50)
+                layoutParams.setMargins(10, 5, 0, 50)
 
                 currentRow?.addView(imageView, layoutParams)
 
@@ -97,8 +98,10 @@ class Fragmento4 : Fragment() {
                     val voltarButton = Button(requireContext())
                     voltarButton.setText(getString(R.string.voltar_bt))
                     voltarButton.setOnClickListener {
-                        linearLayout.removeAllViews()
-                        lerFotos()
+                        val transaction = requireActivity().supportFragmentManager.beginTransaction()
+                        transaction.replace(R.id.container, Fragmento4())
+                        transaction.addToBackStack(null)
+                        transaction.commit()
                     }
 
                     // Adiciona as views ao linearLayout
@@ -106,12 +109,11 @@ class Fragmento4 : Fragment() {
                     linearLayout.addView(clickedImageView, layoutParams)
 
                 }
-
-
-
             }
+
             // Center the last row
             linearLayout.gravity = Gravity.CENTER
+
         }
     }
 
@@ -156,6 +158,8 @@ class Fragmento4 : Fragment() {
                 }
                 val linearLayout: LinearLayout = requireView().findViewById(R.id.verfotosLinear)
                 linearLayout.removeAllViews()
+                linearLayout.orientation = LinearLayout.VERTICAL
+                linearLayout.setPadding(5,5,5,5)
                 // Define que apenas podem haver 2 imagens por linha
                 val imagesPerRow = 2
                 var currentRow: LinearLayout? = null
@@ -181,7 +185,7 @@ class Fragmento4 : Fragment() {
                         // tamanho da imagem e margens
                         var imageSize = 220
                         var layoutParams = LinearLayout.LayoutParams(imageSize, imageSize + 45)
-                        layoutParams.setMargins(10, 0, 0, 50)
+                        layoutParams.setMargins(10, 5, 0, 50)
 
                         currentRow?.addView(imageView, layoutParams)
 
@@ -202,7 +206,6 @@ class Fragmento4 : Fragment() {
                             val voltarButton = Button(requireContext())
                             voltarButton.setText(getString(R.string.voltar_bt))
                             voltarButton.setOnClickListener {
-                                linearLayout.removeAllViews()
                                 val transaction = requireActivity().supportFragmentManager.beginTransaction()
                                 transaction.replace(R.id.container, Fragmento4())
                                 transaction.addToBackStack(null)

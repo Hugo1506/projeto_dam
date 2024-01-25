@@ -162,6 +162,7 @@ class Fragmento2 : Fragment() {
                             CoroutineScope(Dispatchers.Main).launch {
                                 try {
                                     send.publicar(fotoDadoWrapper).await()
+
                                     withContext(Dispatchers.IO) {
                                         Log.d("Publish", "Texto publicado: $textoDigitado")
 
@@ -172,7 +173,6 @@ class Fragmento2 : Fragment() {
                                 }
                             }
                             val transaction = requireActivity().supportFragmentManager.beginTransaction()
-                            linearLayout.removeAllViewsInLayout()
                             transaction.replace(R.id.container, Fragmento2())
                             transaction.addToBackStack(null)
                             transaction.commit()
