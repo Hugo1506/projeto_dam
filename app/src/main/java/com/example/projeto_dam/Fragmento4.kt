@@ -24,11 +24,12 @@ class Fragmento4 : Fragment() {
 
     private lateinit var dados: List<fotoDados>
     lateinit var viewModel: dadosViewModel
+    private var currentRow: LinearLayout? = null
+    private lateinit var linearLayout: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(dadosViewModel::class.java)
-
     }
 
 
@@ -42,13 +43,13 @@ class Fragmento4 : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        linearLayout = requireView().findViewById(R.id.verfotosLinear)
         lerFotos()
     }
 
-    //volta a ler as imagens exitentes para garantir que as imagens criadas depois do inicio da app são mostradass
+    //volta a ler as imagens existentes para garantir que as imagens criadas depois do inicio da app são mostradas
     override fun onResume() {
         super.onResume()
-        val linearLayout: LinearLayout = requireView().findViewById(R.id.verfotosLinear)
         linearLayout.removeAllViews()
         linearLayout.orientation = LinearLayout.VERTICAL
         linearLayout.setPadding(5,5,5,5)
@@ -58,13 +59,13 @@ class Fragmento4 : Fragment() {
         } else {
             // Define que apenas podem haver 2 imagens por linha
             val imagesPerRow = 2
-            var currentRow: LinearLayout? = null
+            currentRow?.removeAllViews()
             for ((index, bitmap) in viewModel.fotosF4.withIndex()) {
                 // quando o index é par ou seja de duas em duas imagens é criado uma nova linha que vai armazenar as imagens
                 if (index % imagesPerRow == 0) {
                     // cria uma nova linha para armazenar as imagens
                     currentRow = LinearLayout(requireContext())
-                    currentRow.orientation = LinearLayout.HORIZONTAL
+                    currentRow!!.orientation = LinearLayout.HORIZONTAL
                     val layoutParams = LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT
@@ -99,6 +100,7 @@ class Fragmento4 : Fragment() {
                     voltarButton.setText(getString(R.string.voltar_bt))
                     voltarButton.setOnClickListener {
                         val transaction = requireActivity().supportFragmentManager.beginTransaction()
+                        currentRow?.removeAllViews()
                         transaction.replace(R.id.container, Fragmento4())
                         transaction.addToBackStack(null)
                         transaction.commit()
@@ -119,7 +121,7 @@ class Fragmento4 : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        val linearLayout: LinearLayout = requireView().findViewById(R.id.verfotosLinear)
+        currentRow?.removeAllViews()
         linearLayout.removeAllViews()
     }
 
@@ -156,20 +158,19 @@ class Fragmento4 : Fragment() {
                         }
                     }
                 }
-                val linearLayout: LinearLayout = requireView().findViewById(R.id.verfotosLinear)
                 linearLayout.removeAllViews()
                 linearLayout.orientation = LinearLayout.VERTICAL
                 linearLayout.setPadding(5,5,5,5)
                 // Define que apenas podem haver 2 imagens por linha
                 val imagesPerRow = 2
-                var currentRow: LinearLayout? = null
+                currentRow?.removeAllViews()
 
                 for ((index, bitmap) in bitmapList.withIndex()) {
                     // quando o index é par ou seja de duas em duas imagens é criado uma nova linha que vai armazenar as imagens
                     if (index % imagesPerRow == 0) {
                         // cria uma nova linha para armazenar as imagens
                         currentRow = LinearLayout(requireContext())
-                        currentRow.orientation = LinearLayout.HORIZONTAL
+                        currentRow!!.orientation = LinearLayout.HORIZONTAL
                         val layoutParams = LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -207,6 +208,7 @@ class Fragmento4 : Fragment() {
                             voltarButton.setText(getString(R.string.voltar_bt))
                             voltarButton.setOnClickListener {
                                 val transaction = requireActivity().supportFragmentManager.beginTransaction()
+                                currentRow?.removeAllViews()
                                 transaction.replace(R.id.container, Fragmento4())
                                 transaction.addToBackStack(null)
                                 transaction.commit()                    }
