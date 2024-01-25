@@ -1,5 +1,6 @@
 package com.example.projeto_dam
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -15,6 +16,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -65,6 +68,14 @@ class Fragmento2 : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val isDarkMode =
+            (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+
+        // muda a cor do backgroud dependento
+        val scrollView: ScrollView = view.findViewById(R.id.scroll)
+        if (!isDarkMode) {
+            scrollView.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.background_light))
+        }
         ler()
     }
 
@@ -171,10 +182,7 @@ class Fragmento2 : Fragment() {
 
                                 }
                             }
-                            val transaction = requireActivity().supportFragmentManager.beginTransaction()
-                            transaction.replace(R.id.container, Fragmento2())
-                            transaction.addToBackStack(null)
-                            transaction.commit()
+                            ler()
                             return@setOnEditorActionListener true
                         }
                         return@setOnEditorActionListener false
