@@ -15,7 +15,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -249,10 +248,10 @@ class Fragmento2 : Fragment() {
             return bitmap
         } catch (e: FileNotFoundException) {
             // não existe nenhum ficheiro com o nome dado
-            Toast.makeText(requireContext(), "ficheiro não encontrado", Toast.LENGTH_LONG).show()
+            Log.e("Publish", "Ficheiro não encontrado: ${e.message}", e)
         } catch (e: IOException) {
             // problemas a ler o ficheiro
-            Toast.makeText(requireContext(), "Erro a ler o ficheiro", Toast.LENGTH_LONG).show()
+            Log.e("Publish", "Erro ao ler o ficheiro: ${e.message}", e)
         }
 
         // se houver algum error devolve null
