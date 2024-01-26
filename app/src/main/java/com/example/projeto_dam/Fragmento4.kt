@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
@@ -158,11 +159,21 @@ class Fragmento4 : Fragment() {
                                 lerFotos()
                             }
 
+                            val editarButton = Button(requireContext())
+                            editarButton.setText("editar")
+
+
                             // Adiciona as views ao linearLayout
                             linearLayout.addView(clickedImageView, layoutParams)
                             linearLayout.addView(voltarButton)
+                            linearLayout.addView(editarButton)
                             linearLayout.addView(desc)
 
+
+                            //listener do editar
+                            editarButton.setOnClickListener(){
+                                createEditText(linearLayout, desc, viewModel.descrF4[index])
+                            }
                         }
 
                     }
@@ -175,6 +186,15 @@ class Fragmento4 : Fragment() {
         }
 
 
+    }
+
+    private fun createEditText(linearLayout: LinearLayout, view: View, str: String){
+
+        val edit = EditText(requireContext())
+        edit.setText(str)
+
+        linearLayout.removeView(view)
+        linearLayout.addView(edit)
     }
 
 }
