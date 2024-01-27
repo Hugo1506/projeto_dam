@@ -4,18 +4,25 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.text.InputType
 import android.util.Base64
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.CoroutineScope
@@ -42,11 +49,13 @@ class Fragmento4 : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         return inflater.inflate(R.layout.fragment_fragmento4, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         val isDarkMode =
             (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
@@ -190,11 +199,34 @@ class Fragmento4 : Fragment() {
 
     private fun createEditText(linearLayout: LinearLayout, view: View, str: String){
 
+        val imm = requireContext().getSystemService<InputMethodManager>(InputMethodManager::class.java)
+
+        //criar o editText
         val edit = EditText(requireContext())
         edit.setText(str)
 
+        //mete o foco no editText
+        edit.requestFocus()
+
+
+        edit.inputType = InputType.TYPE_CLASS_TEXT
+        edit.imeOptions = EditorInfo.IME_ACTION_DONE
+
+        edit.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                val editedText = edit.text.toString()
+                imm.hideSoftInputFromWindow(edit.windowToken, 0)
+
+            } else {
+                false
+            }
+        }
+
         linearLayout.removeView(view)
         linearLayout.addView(edit)
+
+
+
     }
 
 }
