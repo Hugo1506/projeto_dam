@@ -1,5 +1,6 @@
 package com.example.projeto_dam
 
+import android.app.AlertDialog
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -163,11 +164,16 @@ class Fragmento4 : Fragment() {
                             val editarButton = Button(requireContext())
                             editarButton.text = "editar"
 
+                            val apagarButton = Button(requireContext())
+                            apagarButton.text = "apagar"
+
+
 
                             // Adiciona as views ao linearLayout
                             linearLayout.addView(clickedImageView, layoutParams)
                             linearLayout.addView(voltarButton)
                             linearLayout.addView(editarButton)
+                            linearLayout.addView(apagarButton)
                             linearLayout.addView(desc)
 
 
@@ -217,12 +223,42 @@ class Fragmento4 : Fragment() {
                                 linearLayout.removeView(desc)
                                 linearLayout.addView(edit)
                             }
+
+
+                            apagarButton.setOnClickListener(){
+                                val alertDialogBuilder = AlertDialog.Builder(requireContext())
+                                alertDialogBuilder.setTitle("Confirmação")
+                                alertDialogBuilder.setMessage("Tem certeza que deseja apagar esta imagem?")
+
+                                alertDialogBuilder.setPositiveButton("Sim") { dialog, which ->
+                                    val deleteService = RetrofitInitializer().deleteService()
+
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        try {
+                                            deleteService?.deleteRow(viewModel.Id[index])
+
+                                            withContext(Dispatchers.IO) {
+                                            }
+                                        } catch (e: Exception) {
+                                            Log.e("Delete", "Error deleting row: ${e.message}", e)
+                                        }
+
+                                        lerFotos()
+                                    }
+                                }
+
+                                alertDialogBuilder.setNegativeButton("Não") { dialog, which ->
+                                    dialog.dismiss()
+                                }
+
+                                val alertDialog = alertDialogBuilder.create()
+                                alertDialog.show()
+                            }
                         }
 
                     }
 
                 }
-                // Center the last row
                 linearLayout.gravity = Gravity.CENTER
 
             }
@@ -231,35 +267,5 @@ class Fragmento4 : Fragment() {
 
 
     }
-    /*private fun createEditText(linearLayout: LinearLayout, view: View, str: String){
-
-        val imm = requireContext().getSystemService<InputMethodManager>(InputMethodManager::class.java)
-        //criar o editText
-        val edit = EditText(requireContext())
-        edit.setText(str)
-
-        //mete o foco no editText
-        edit.requestFocus()
-
-
-        edit.inputType = InputType.TYPE_CLASS_TEXT
-        edit.imeOptions = EditorInfo.IME_ACTION_DONE
-
-        edit.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                editedText = edit.text.toString()
-                imm.hideSoftInputFromWindow(edit.windowToken, 0)
-
-            } else {
-                false
-            }
-        }
-
-        linearLayout.removeView(view)
-        linearLayout.addView(edit)
-
-
-
-    }*/
 
 }
