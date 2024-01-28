@@ -2,6 +2,7 @@ package com.example.projeto_dam
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
@@ -41,6 +43,92 @@ class MainActivity : AppCompatActivity() {
         val imm = getSystemService<InputMethodManager>()
         viewModel = ViewModelProvider(this).get<dadosViewModel>()
 
+        val registarButtn = Button(this)
+        registarButtn.text = "Registar"
+        registarButtn.layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+
+        registarButtn.setOnClickListener {
+
+        }
+        //mete o button no layout
+        val container = findViewById<RelativeLayout>(R.id.container)
+        val params = RelativeLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        params.addRule(RelativeLayout.BELOW, R.id.Password)
+        params.addRule(RelativeLayout.CENTER_HORIZONTAL)
+        registarButtn.layoutParams = params
+        container.addView(registarButtn)
+
+
+        registarButtn.setOnClickListener(){
+            userNameText.visibility = View.GONE
+            passwordText.visibility = View.GONE
+            registarButtn.visibility = View.GONE
+
+            //cria o editText do username
+            val usernameRegist = EditText(this)
+            usernameRegist.id = View.generateViewId()
+            usernameRegist.layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            usernameRegist.hint = "username a registar"
+            usernameRegist.inputType = InputType.TYPE_CLASS_TEXT
+            container.addView(usernameRegist)
+
+            // cria o editText da password
+            val passwordRegist = EditText(this)
+            passwordRegist.id = View.generateViewId()
+            passwordRegist.layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            passwordRegist.hint = "password"
+            passwordRegist.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+
+            //mete os novos editText no layout
+            val params = RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            params.addRule(RelativeLayout.BELOW, usernameRegist.id)
+            passwordRegist.layoutParams = params
+            container.addView(passwordRegist)
+
+            // criar o botão Login
+            val loginButton = Button(this)
+            loginButton.text = "Login"
+            loginButton.layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            loginButton.setOnClickListener {
+                //mostra a página de login
+                userNameText.visibility = View.VISIBLE
+                passwordText.visibility = View.VISIBLE
+                registarButtn.visibility = View.VISIBLE
+
+                //remove a parte referente ao registo
+                container.removeView(usernameRegist)
+                container.removeView(passwordRegist)
+                container.removeView(loginButton)
+
+            }
+            // adiciona o botão debaixo das editText
+            val paramsLoginButton = RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            paramsLoginButton.addRule(RelativeLayout.BELOW, passwordRegist.id)
+            loginButton.layoutParams = paramsLoginButton
+            container.addView(loginButton)
+
+        }
         val call = RetrofitInitializer().dadosResposta()!!.list()
 
 
