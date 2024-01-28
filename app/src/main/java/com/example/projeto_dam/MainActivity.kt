@@ -115,12 +115,55 @@ class MainActivity : AppCompatActivity() {
                 container.removeView(passwordRegist)
                 container.removeView(loginButton)
 
+
+
             }
             // adiciona o botão debaixo das editText
             val paramsLoginButton = RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
+            usernameRegist.requestFocus()
+            imm?.showSoftInput(usernameRegist, InputMethodManager.SHOW_IMPLICIT)
+            if (!usernameRegist.hasFocus()) {
+                passwordRegist.requestFocus()
+            }
+
+            passwordRegist.setOnEditorActionListener(){ v , actionId , ev ->
+
+                if(actionId == EditorInfo.IME_ACTION_DONE) {
+                    imm?.hideSoftInputFromWindow(passwordText.windowToken, 0)
+
+                val send = RetrofitInitializer().registarUser()
+
+                val dadosRegisto = DadosRegistar(usernameRegist.text.toString(), passwordRegist.text.toString())
+                CoroutineScope(Dispatchers.IO).launch {
+
+                    try {
+
+                        send.registar(RegistarAuth.registaWrapper(dadosRegisto))
+
+
+                        withContext(Dispatchers.Main) {
+
+                            Toast.makeText(this@MainActivity, "Registo concluido", Toast.LENGTH_LONG).show()
+
+                            usernameRegist.visibility = View.GONE
+                            passwordRegist.visibility = View.GONE
+                            container.removeView(loginButton)
+                            tabLayout.visibility = View.VISIBLE
+                            viewPager2.visibility = View.VISIBLE
+
+                        }
+                    } catch (e: Exception) {
+                        Log.e("Register", "Erro ao registar: ${e.message}", e)
+                    }
+                }
+                    return@setOnEditorActionListener true
+                }
+                return@setOnEditorActionListener false
+            }
+
             paramsLoginButton.addRule(RelativeLayout.BELOW, passwordRegist.id)
             loginButton.layoutParams = paramsLoginButton
             container.addView(loginButton)
@@ -175,13 +218,6 @@ class MainActivity : AppCompatActivity() {
 
         tabLayout.visibility = View.INVISIBLE
         viewPager2.visibility = View.INVISIBLE
-        val registaButton = Button(this)
-        val loginButton = Button(this)
-        registaButton.text = "Registar"
-        loginButton.text = "Login"
-        registaButton.layoutParams = ViewGroup.LayoutParams(15, 40)
-        loginButton.layoutParams = ViewGroup.LayoutParams(15, 40)
-        registaButton
 
         passwordText.setOnEditorActionListener { v , actionId , ev ->
             if(actionId == EditorInfo.IME_ACTION_DONE) {
