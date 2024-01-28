@@ -44,15 +44,12 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get<dadosViewModel>()
 
         val registarButtn = Button(this)
-        registarButtn.text = "Registar"
+        registarButtn.text = "ir para o registo"
         registarButtn.layoutParams = ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )
 
-        registarButtn.setOnClickListener {
-
-        }
         //mete o button no layout
         val container = findViewById<RelativeLayout>(R.id.container)
         val params = RelativeLayout.LayoutParams(
@@ -102,9 +99,9 @@ class MainActivity : AppCompatActivity() {
 
             // criar o botão Login
             val loginButton = Button(this)
-            loginButton.text = "Login"
+            loginButton.text = "Ir para o login"
             loginButton.layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
             loginButton.setOnClickListener {
