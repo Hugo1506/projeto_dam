@@ -187,30 +187,33 @@ class Fragmento4 : Fragment() {
                                 edit.setOnEditorActionListener { _, actionId, _ ->
                                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                                         editedText = edit.text.toString()
+
                                         imm.hideSoftInputFromWindow(edit.windowToken, 0)
 
-                                    } else {
-                                        false
-                                    }
-                                }
+                                        val dadosEdit = fotoDadosEditar(editedText)
+                                        val send = RetrofitInitializer().editarDescricao()
+                                        CoroutineScope(Dispatchers.Main).launch {
+                                            try {
+                                                send?.editarDesc(viewModel.Id[index], editarDescr.descEditWrapper(dadosEdit))
+                                                    ?.await()
 
+                                                withContext(Dispatchers.IO) {
+                                                    Log.d("Edit", "Texto editado: $editedText")
 
-                                val dadosEdit = fotoDadosEditar(editedText)
-                                val send = RetrofitInitializer().editarDescricao()
-                                CoroutineScope(Dispatchers.Main).launch {
-                                    try {
-                                        send?.editarDesc(viewModel.Id[index], editarDescr.descEditWrapper(dadosEdit))
-                                            ?.await()
+                                                }
+                                            } catch (e: Exception) {
+                                                Log.e("Edit", "Erro ao editar: ${e.message}", e)
 
-                                        withContext(Dispatchers.IO) {
-                                            Log.d("Edit", "Texto editado: $editedText")
-
+                                            }
                                         }
-                                    } catch (e: Exception) {
-                                        Log.e("Edit", "Erro ao editar: ${e.message}", e)
-
+                                        return@setOnEditorActionListener true
+                                    } else {
+                                        return@setOnEditorActionListener false
                                     }
                                 }
+
+
+
                                 linearLayout.removeView(desc)
                                 linearLayout.addView(edit)
                             }
