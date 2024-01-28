@@ -153,7 +153,13 @@ class Fragmento4 : Fragment() {
                             layoutParams = LinearLayout.LayoutParams(imageSize, imageSize)
 
                             val desc = TextView(requireContext())
-                            desc.text = viewModel.dados[index].Descricao
+                            var idDescricao: Int = 0
+                            for (i in viewModel.dados.indices){
+                                if ((BitmapFactory.decodeByteArray(viewModel.dados[i].fotob64.toByteArray() , 0, viewModel.dados[i].fotob64.toByteArray().size )) == bitmap){
+                                    idDescricao = i
+                                }
+                            }
+                            desc.setText(viewModel.dados[idDescricao].Descricao)
 
                             val voltarButton = Button(requireContext())
                             voltarButton.text = getString(R.string.voltar_bt)
@@ -204,7 +210,9 @@ class Fragmento4 : Fragment() {
                                                     ?.await()
 
                                                 withContext(Dispatchers.IO) {
+
                                                     Log.d("Edit", "Texto editado: $editedText")
+                                                    linearLayout.removeView(edit)
 
                                                 }
                                             } catch (e: Exception) {
@@ -212,6 +220,7 @@ class Fragmento4 : Fragment() {
 
                                             }
                                         }
+
                                         return@setOnEditorActionListener true
                                     } else {
                                         return@setOnEditorActionListener false

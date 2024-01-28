@@ -150,7 +150,7 @@ class MainActivity : AppCompatActivity() {
                             viewModel.user = usernameRegist.text.toString()
                             usernameRegist.visibility = View.GONE
                             passwordRegist.visibility = View.GONE
-                            container.removeView(loginButton)
+                            loginButton.visibility = View.GONE
                             tabLayout.visibility = View.VISIBLE
                             viewPager2.visibility = View.VISIBLE
 
@@ -191,6 +191,8 @@ class MainActivity : AppCompatActivity() {
         if (!userNameText.hasFocus()) {
             passwordText.requestFocus()
         }
+
+        registarButtn.visibility = View.GONE
 
         tabLayout = findViewById(R.id.tab_layout)
         viewPager2 = findViewById(R.id.view_pager2)
