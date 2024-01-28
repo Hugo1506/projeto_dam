@@ -195,11 +195,11 @@ class Fragmento4 : Fragment() {
                                 }
 
 
-                                val dadosEdit = fotoDadosEditar(editedText, viewModel.Id[index])
+                                val dadosEdit = fotoDadosEditar(editedText)
                                 val send = RetrofitInitializer().editarDescricao()
                                 CoroutineScope(Dispatchers.Main).launch {
                                     try {
-                                        send?.editarDesc(editarDescr.descEditWrapper(dadosEdit))
+                                        send?.editarDesc(viewModel.Id[index], editarDescr.descEditWrapper(dadosEdit))
                                             ?.await()
 
                                         withContext(Dispatchers.IO) {
