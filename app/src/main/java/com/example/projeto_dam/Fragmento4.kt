@@ -30,7 +30,7 @@ import retrofit2.await
 
 class Fragmento4 : Fragment() {
 
-    private lateinit var dados: List<fotoDados>
+    private lateinit var dados: List<fotoDadosParaEdit>
     lateinit var viewModel: dadosViewModel
     private var currentRow: LinearLayout? = null
     private lateinit var linearLayout: LinearLayout
@@ -92,18 +92,19 @@ class Fragmento4 : Fragment() {
 
 
                 dados = response.folha1
+                var cont = 0
                 for (i in dados.indices) {
                     if (dados[i].User == viewModel.user){
+
                         val cleanImage: String = dados[i].fotob64.replace("data:image/png;base64,", "")
                             .replace("data:image/jpeg;base64,", "")
                         val bytes: ByteArray = Base64.decode(cleanImage, Base64.DEFAULT)
                         bitmapList.add(BitmapFactory.decodeByteArray(bytes , 0, bytes.size ))
-                        val descricao = dados[i].Descricao
-
-                        if(!viewModel.dados[i].fotob64.equals(BitmapFactory.decodeByteArray(bytes , 0, bytes.size ))) {
-
-                            viewModel.dados.add(fotoDados(dados[i].fotob64, descricao, viewModel.user ))
-                            viewModel.descrF4.add(dados[i].Descricao)
+                        viewModel.dados.add(fotoDados(dados[i].fotob64, dados[i].Descricao, viewModel.user ))
+                        if(!viewModel.dados[cont].fotob64.equals(BitmapFactory.decodeByteArray(bytes , 0, bytes.size ))) {
+                            cont = cont.inc()
+                            viewModel.dados.add(fotoDados(dados[i].fotob64,dados[i].Descricao, viewModel.user ))
+                            viewModel.Id.add(dados[i].Id)
                         }
                     }
                 }
@@ -171,13 +172,35 @@ class Fragmento4 : Fragment() {
 
 
                             //listener do editar
-                            editarButton.setOnClickListener() {
-                                createEditText(linearLayout, desc, viewModel.dados[index].Descricao)
-                                val dadosEdit = fotoDadosEditar(editedText, viewModel.userId)
+                            editarButton.setOnClickListener {
+                                val imm = requireContext().getSystemService<InputMethodManager>(InputMethodManager::class.java)
+                                //criar o editText
+                                val edit = EditText(requireContext())
+                                edit.inputType = InputType.TYPE_CLASS_TEXT
+                                edit.imeOptions = EditorInfo.IME_ACTION_DONE
+                                edit.hint = "Texto Editado"
+                                imm.showSoftInput( edit, InputMethodManager.SHOW_IMPLICIT)
+
+                                //mete o foco no editText
+                                edit.requestFocus()
+
+                                edit.setOnEditorActionListener { _, actionId, _ ->
+                                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                                        editedText = edit.text.toString()
+                                        imm.hideSoftInputFromWindow(edit.windowToken, 0)
+
+                                    } else {
+                                        false
+                                    }
+                                }
+
+
+                                val dadosEdit = fotoDadosEditar(editedText, viewModel.Id[index])
                                 val send = RetrofitInitializer().editarDescricao()
                                 CoroutineScope(Dispatchers.Main).launch {
                                     try {
-                                        send!!.editarDesc(editarDescr.descEditWrapper(dadosEdit)).await()
+                                        send?.editarDesc(editarDescr.descEditWrapper(dadosEdit))
+                                            ?.await()
 
                                         withContext(Dispatchers.IO) {
                                             Log.d("Edit", "Texto editado: $editedText")
@@ -188,7 +211,8 @@ class Fragmento4 : Fragment() {
 
                                     }
                                 }
-
+                                linearLayout.removeView(desc)
+                                linearLayout.addView(edit)
                             }
                         }
 
@@ -204,7 +228,7 @@ class Fragmento4 : Fragment() {
 
 
     }
-    private fun createEditText(linearLayout: LinearLayout, view: View, str: String){
+    /*private fun createEditText(linearLayout: LinearLayout, view: View, str: String){
 
         val imm = requireContext().getSystemService<InputMethodManager>(InputMethodManager::class.java)
         //criar o editText
@@ -233,6 +257,6 @@ class Fragmento4 : Fragment() {
 
 
 
-    }
+    }*/
 
 }
