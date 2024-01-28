@@ -19,10 +19,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.CoroutineScope
@@ -37,6 +34,7 @@ class Fragmento4 : Fragment() {
     lateinit var viewModel: dadosViewModel
     private var currentRow: LinearLayout? = null
     private lateinit var linearLayout: LinearLayout
+    var editedText: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,14 +47,11 @@ class Fragmento4 : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         return inflater.inflate(R.layout.fragment_fragmento4, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
         val isDarkMode =
             (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
 
@@ -104,15 +99,11 @@ class Fragmento4 : Fragment() {
                         val bytes: ByteArray = Base64.decode(cleanImage, Base64.DEFAULT)
                         bitmapList.add(BitmapFactory.decodeByteArray(bytes , 0, bytes.size ))
                         val descricao = dados[i].Descricao
-                        if(!viewModel.fotosF4.contains(BitmapFactory.decodeByteArray(bytes , 0, bytes.size ))) {
-                            viewModel.fotosF4.add(
-                                BitmapFactory.decodeByteArray(
-                                    bytes,
-                                    0,
-                                    bytes.size
-                                )
-                            )
-                            viewModel.descrF4.add(descricao)
+
+                        if(!viewModel.dados[i].fotob64.equals(BitmapFactory.decodeByteArray(bytes , 0, bytes.size ))) {
+
+                            viewModel.dados.add(fotoDados(dados[i].fotob64, descricao, viewModel.user ))
+                            viewModel.descrF4.add(dados[i].Descricao)
                         }
                     }
                 }
@@ -160,16 +151,16 @@ class Fragmento4 : Fragment() {
                             layoutParams = LinearLayout.LayoutParams(imageSize, imageSize)
 
                             val desc = TextView(requireContext())
-                            desc.text = viewModel.descrF4[index]
+                            desc.text = viewModel.dados[index].Descricao
 
                             val voltarButton = Button(requireContext())
-                            voltarButton.setText(getString(R.string.voltar_bt))
+                            voltarButton.text = getString(R.string.voltar_bt)
                             voltarButton.setOnClickListener {
                                 lerFotos()
                             }
 
                             val editarButton = Button(requireContext())
-                            editarButton.setText("editar")
+                            editarButton.text = "editar"
 
 
                             // Adiciona as views ao linearLayout
@@ -180,8 +171,24 @@ class Fragmento4 : Fragment() {
 
 
                             //listener do editar
-                            editarButton.setOnClickListener(){
-                                createEditText(linearLayout, desc, viewModel.descrF4[index])
+                            editarButton.setOnClickListener() {
+                                createEditText(linearLayout, desc, viewModel.dados[index].Descricao)
+                                val dadosEdit = fotoDadosEditar(editedText, viewModel.userId)
+                                val send = RetrofitInitializer().editarDescricao()
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    try {
+                                        send!!.editarDesc(editarDescr.descEditWrapper(dadosEdit)).await()
+
+                                        withContext(Dispatchers.IO) {
+                                            Log.d("Edit", "Texto editado: $editedText")
+
+                                        }
+                                    } catch (e: Exception) {
+                                        Log.e("Edit", "Erro ao editar: ${e.message}", e)
+
+                                    }
+                                }
+
                             }
                         }
 
@@ -192,15 +199,14 @@ class Fragmento4 : Fragment() {
                 linearLayout.gravity = Gravity.CENTER
 
             }
+
         }
 
 
     }
-
     private fun createEditText(linearLayout: LinearLayout, view: View, str: String){
 
         val imm = requireContext().getSystemService<InputMethodManager>(InputMethodManager::class.java)
-
         //criar o editText
         val edit = EditText(requireContext())
         edit.setText(str)
@@ -214,7 +220,7 @@ class Fragmento4 : Fragment() {
 
         edit.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val editedText = edit.text.toString()
+                editedText = edit.text.toString()
                 imm.hideSoftInputFromWindow(edit.windowToken, 0)
 
             } else {

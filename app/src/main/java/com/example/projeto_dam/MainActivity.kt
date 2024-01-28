@@ -93,6 +93,7 @@ class MainActivity : AppCompatActivity() {
                     ) {*/
                         viewModel.user = userNameText.text.toString()
                         isAuth = true
+//                        viewModel.userId = dados[i].id
                     /*}
                 }*/
                 if (isAuth) {

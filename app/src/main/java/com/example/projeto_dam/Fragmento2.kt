@@ -48,7 +48,8 @@ class Fragmento2 : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     lateinit var viewModel: dadosViewModel
-
+    lateinit var linearLayout: LinearLayout
+    var currentRow: LinearLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +77,7 @@ class Fragmento2 : Fragment() {
         if (!isDarkMode) {
             scrollView.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.background_light))
         }
+        linearLayout = requireView().findViewById(R.id.linear)
         ler()
     }
 
@@ -87,6 +89,8 @@ class Fragmento2 : Fragment() {
 
     override fun onPause() {
         super.onPause()
+        currentRow?.removeAllViews()
+        linearLayout.removeAllViews()
     }
 
 
@@ -99,19 +103,19 @@ class Fragmento2 : Fragment() {
         for (i in 0 until getNumFotos()) {
             bitmapList.add(getImage(i))
         }
-        val linearLayout: LinearLayout = requireView().findViewById(R.id.linear)
+
         //apaga todas as views anteriores
         linearLayout.removeAllViews()
         // Define que apenas podem haver 2 imagens por linha
         val imagesPerRow = 2
-        var currentRow: LinearLayout? = null
+
 
         for ((index, bitmap) in bitmapList.withIndex()) {
             // quando o index é par ou seja de duas em duas imagens é criado uma nova linha que vai armazenar as imagens
             if (index % imagesPerRow == 0) {
                 // cria uma nova linha para armazenar as imagens
                 currentRow = LinearLayout(requireContext())
-                currentRow.orientation = LinearLayout.HORIZONTAL
+                currentRow!!.orientation = LinearLayout.HORIZONTAL
                 val layoutParams = LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
@@ -165,7 +169,7 @@ class Fragmento2 : Fragment() {
                             bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteOPS)
                             val bytes: ByteArray = byteOPS.toByteArray()
                             val encoded = Base64.encodeToString(bytes, Base64.DEFAULT)
-                            val fotoDadoAEnviar = fotoDados(encoded, textoDigitado, viewModel.user)
+                            val fotoDadoAEnviar = fotoDados(encoded, textoDigitado, viewModel.dados[index].User )
                             val fotoDadoWrapper = fotoEnviar.fotoDadosWrapper(fotoDadoAEnviar)
                             val send = RetrofitInitializer().dadosFoto()
 
