@@ -91,22 +91,18 @@ class Fragmento4 : Fragment() {
 
             withContext(Dispatchers.Main) {
 
-
                 dados = response.folha1
-                var cont = 0
                 for (i in dados.indices) {
                     if (dados[i].User == viewModel.user){
-
-                        val cleanImage: String = dados[i].fotob64.replace("data:image/png;base64,", "")
+                        var cleanImage: String = dados[i].fotob64.replace("data:image/png;base64,", "")
                             .replace("data:image/jpeg;base64,", "")
-                        val bytes: ByteArray = Base64.decode(cleanImage, Base64.DEFAULT)
+                        var bytes: ByteArray = Base64.decode(cleanImage, Base64.DEFAULT)
                         bitmapList.add(BitmapFactory.decodeByteArray(bytes , 0, bytes.size ))
-                        viewModel.dados.add(fotoDados(dados[i].fotob64, dados[i].Descricao, viewModel.user ))
-                        if(!viewModel.dados[cont].fotob64.equals(BitmapFactory.decodeByteArray(bytes , 0, bytes.size ))) {
-                            cont = cont.inc()
-                            viewModel.dados.add(fotoDados(dados[i].fotob64,dados[i].Descricao, viewModel.user ))
-                            viewModel.Id.add(dados[i].Id)
-                        }
+
+                        // adiciona os dados
+                        val fotoDado = fotoDados(dados[i].fotob64, dados[i].Descricao, viewModel.user)
+                        viewModel.dados.add(fotoDado)
+                        viewModel.Id.add(dados[i].Id)
                     }
                 }
                 linearLayout.removeAllViews()
@@ -131,7 +127,6 @@ class Fragmento4 : Fragment() {
                     }
                     if (bitmap != null) {
                         val imageView = ImageView(requireContext())
-
                         imageView.setImageBitmap(bitmap)
 
                         // tamanho da imagem e margens
@@ -143,6 +138,8 @@ class Fragmento4 : Fragment() {
 
                         // quando uma imagem é clicada
                         imageView.setOnClickListener {
+
+
                             // Remove todas as views existentes do linearLayout
                             linearLayout.removeAllViews()
                             val clickedImageView = ImageView(requireContext())
@@ -154,6 +151,11 @@ class Fragmento4 : Fragment() {
 
                             val desc = TextView(requireContext())
                             desc.text = viewModel.dados[index].Descricao
+
+                            for (element in viewModel.dados){
+                                Log.d("desc",element.Descricao)
+                            }
+
 
                             val voltarButton = Button(requireContext())
                             voltarButton.text = getString(R.string.voltar_bt)

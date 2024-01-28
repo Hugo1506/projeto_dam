@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">projeto_dam</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="fragmento2">Pincipal</string>
+    <string name="fragmento2">Galeria</string>
     <string name="fragmento3">Sobre</string>
-    <string name="fragmento4">Minhas fotos</string>
+    <string name="fragmento4">Fotos publicadas</string>
     <string name="cam">📸</string>
     <string name="foto">Tirar foto</string>
     <string name="sobre">

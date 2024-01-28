@@ -141,13 +141,14 @@ class MainActivity : AppCompatActivity() {
 
                     try {
 
-                        send.registar(RegistarAuth.registaWrapper(dadosRegisto))
+                        send.registar(RegistarAuth.registaWrapper(dadosRegisto)).await()
 
 
                         withContext(Dispatchers.Main) {
 
                             Toast.makeText(this@MainActivity, "Registo concluido", Toast.LENGTH_LONG).show()
 
+                            viewModel.user = usernameRegist.text.toString()
                             usernameRegist.visibility = View.GONE
                             passwordRegist.visibility = View.GONE
                             container.removeView(loginButton)
@@ -238,6 +239,7 @@ class MainActivity : AppCompatActivity() {
                     passwordText.clearFocus()
                     tabLayout.visibility = View.VISIBLE
                     viewPager2.visibility = View.VISIBLE
+                    registarButtn.visibility = View.GONE
                     Toast.makeText(
                         this@MainActivity,
                         "Acesso disponibilizado",

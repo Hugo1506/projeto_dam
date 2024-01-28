@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="fragmento2">fragmento2</string>
-    <string name="fragmento3">fragmento3</string>
+    <string name="fragmento2">Galeria</string>
+    <string name="fragmento3">Sobre</string>
     <string name="sobre">
         Engenharia informática \n
         Desenvolvimento de Aplicações Móveis 2023/2024 \n

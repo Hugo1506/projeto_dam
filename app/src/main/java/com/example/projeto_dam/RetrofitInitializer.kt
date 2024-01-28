@@ -10,7 +10,7 @@ class RetrofitInitializer {
     private var okHTTP = OkHttpClient.Builder().build()
     private var gson = GsonBuilder().setLenient().create()
     private var retrofit = Retrofit.Builder()
-        .baseUrl("https://api.sheety.co/4f08a8f7241e598e4e942c8eb044caf5/vinx/")
+        .baseUrl("https://api.sheety.co/bfe225a3b1923b39d4fc081774e18524/vinx/")
         .client(okHTTP)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
