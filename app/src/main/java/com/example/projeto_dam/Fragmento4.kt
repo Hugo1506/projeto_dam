@@ -92,16 +92,18 @@ class Fragmento4 : Fragment() {
 
 
                 dados = response.folha1
+                var cont = 0
                 for (i in dados.indices) {
                     if (dados[i].User == viewModel.user){
+
                         val cleanImage: String = dados[i].fotob64.replace("data:image/png;base64,", "")
                             .replace("data:image/jpeg;base64,", "")
                         val bytes: ByteArray = Base64.decode(cleanImage, Base64.DEFAULT)
                         bitmapList.add(BitmapFactory.decodeByteArray(bytes , 0, bytes.size ))
                         val descricao = dados[i].Descricao
-
-                        if(!viewModel.dados[i].fotob64.equals(BitmapFactory.decodeByteArray(bytes , 0, bytes.size ))) {
-
+                        viewModel.dados.add(fotoDados(dados[i].fotob64, descricao, viewModel.user ))
+                        if(!viewModel.dados[cont].fotob64.equals(BitmapFactory.decodeByteArray(bytes , 0, bytes.size ))) {
+                            cont = cont.inc()
                             viewModel.dados.add(fotoDados(dados[i].fotob64, descricao, viewModel.user ))
                             viewModel.descrF4.add(dados[i].Descricao)
                         }
@@ -171,7 +173,7 @@ class Fragmento4 : Fragment() {
 
 
                             //listener do editar
-                            editarButton.setOnClickListener() {
+                            editarButton.setOnClickListener {
                                 createEditText(linearLayout, desc, viewModel.dados[index].Descricao)
                                 val dadosEdit = fotoDadosEditar(editedText, viewModel.userId)
                                 val send = RetrofitInitializer().editarDescricao()
