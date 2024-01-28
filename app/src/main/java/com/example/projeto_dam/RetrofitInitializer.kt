@@ -19,4 +19,5 @@ class RetrofitInitializer {
     fun dadosFotosResposta(): fotosResposta? = retrofit.create(fotosResposta::class.java)
     fun editarDescricao(): editarDescr? = retrofit.create(editarDescr::class.java)
     fun deleteService(): DeleteService? = retrofit.create(DeleteService::class.java)
+    fun registarUser(): DadosRegistar = retrofit.create(DadosRegistar::class.java)
 }
